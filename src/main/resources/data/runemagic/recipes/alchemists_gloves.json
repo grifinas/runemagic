@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " L ",
+    "LBL"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "B": {
+      "item": "runemagic:alchemists_book"
+    }
+  },
+  "result": {
+    "item": "runemagic:alchemists_gloves"
+  }
+}
