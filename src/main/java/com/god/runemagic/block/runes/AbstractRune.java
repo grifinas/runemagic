@@ -15,6 +15,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;
@@ -45,22 +46,28 @@ public abstract class AbstractRune extends Block {
 		builder.add(activated);
 	}
 	
-	protected void runeBehaviour(World world, BlockState state, BlockPos position, List<ItemEntity> items) {
-		
+	protected boolean runeBehaviour(World world, BlockState state, BlockPos position, PlayerEntity player, List<ItemEntity> items) {
+		return true;
 	} 
+	
+	protected void afterSuccessfulActivation(World world, BlockState state, BlockPos position, PlayerEntity player) {
+		world.destroyBlock(position, false);
+	}
 
-	public void activate(World world, BlockState state, BlockPos position) {
+	public void activate(World world, BlockState state, BlockPos position, PlayerEntity player) {
 		RuneMagicMod.LOGGER.info("activating original pos: {}", position);
 
 		List<ItemEntity> items = this.activateNeightbours(world, position);
-		this.runeBehaviour(world, state, position, items);
+		if (this.runeBehaviour(world, state, position, player, items)) {
+			this.afterSuccessfulActivation(world, state, position, player);
+		}
 	}
 
 	public void changeType(World world, BlockPos position) {
 		world.removeBlock(position, false);
 		BlockState newState = this.getChangeState();
-		world.setBlock(position, newState, 0);
 		world.destroyBlock(position, false);
+		world.setBlock(position, newState, 0);
 	}
 	
 	protected abstract BlockState getChangeState();

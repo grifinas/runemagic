@@ -1,13 +1,16 @@
 package com.god.runemagic.common;
 
 import com.god.runemagic.RuneMagicMod;
+import com.god.runemagic.common.ManaMap.Mana;
 
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
 public class Transmutation {
 	private String entity;
@@ -22,8 +25,8 @@ public class Transmutation {
 		this.cost = cost;
 	}
 
-	public Result dryRun(ItemStack stack, float mana) {
-		int availableManaInstances = (int) (mana / this.cost);
+	public Result dryRun(ItemStack stack, Mana mana) {
+		int availableManaInstances = (int) (mana.getValue() / this.cost);
 		int stackInstances = stack.getCount() / this.fromRate;
 	
 		int realInstances = Math.min(availableManaInstances, stackInstances);
@@ -35,10 +38,9 @@ public class Transmutation {
 		return new Result(this.entity, newEntityCount, remainingOldEntities, manaCost);
 	}
 	
-	public Result transmute(World world, ItemEntity item, float mana) {
+	public Result transmute(World world, ItemEntity item, PlayerEntity player) {
+		Mana mana = ManaMap.get().getPlayerMana(player);
 		Result result = this.dryRun(item.getItem(), mana);
-
-		// TODO lower mana for user
 
 		Item resultingItem = Registry.ITEM.get(new ResourceLocation(result.entity));
 		
@@ -47,6 +49,8 @@ public class Transmutation {
 		boolean added = world.addFreshEntity(resultingItemEntity);
 		
 		if (added) {
+			mana.setValue(mana.getValue() - (int)Math.floor(result.manaUsed));
+
 			if (result.remainingOldEntities > 0) {
 				item.getItem().setCount(result.remainingOldEntities);
 			} else {
@@ -55,6 +59,8 @@ public class Transmutation {
 		} else {
 			RuneMagicMod.LOGGER.info("Failed to add entity {}", resultingItemEntity);
 		}
+		
+		RuneMagicMod.LOGGER.info("Finished transmutation with {}", mana);
 		
 		return result;
 	}

@@ -9,6 +9,7 @@ import com.god.runemagic.common.TransmutationMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
@@ -35,19 +36,21 @@ public class DowngradeRuneBlock extends RunemagicModElements.ModElement {
 
 		@Override
 		protected BlockState getChangeState() {
-			return UpgradeRuneBlock.block.defaultBlockState();
+			return DisassemblyRuneBlock.block.defaultBlockState();
 		}
 		
 		@Override
-		protected void runeBehaviour(World world, BlockState state, BlockPos position, List<ItemEntity> items) {
+		protected boolean runeBehaviour(World world, BlockState state, BlockPos position, PlayerEntity player, List<ItemEntity> items) {
 			TransmutationMap transmutation = TransmutationMap.get();
 
 			items.forEach(item -> {
 				Transmutation tr = transmutation.findDowngrade(item);
 				if (tr != null) {
-					tr.transmute(world, item, 100.0f);
+					tr.transmute(world, item, player);
 				}
 			});
+			
+			return true;
 		}
 	}
 }

@@ -3,9 +3,14 @@ package com.god.runemagic.item;
 import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.block.runes.AbstractRune;
+import com.god.runemagic.common.ManaMap;
+import com.god.runemagic.common.ManaMap.Mana;
+import com.god.runemagic.common.data.IManaStorage;
+import com.god.runemagic.common.data.ManaCapability;
 import com.god.runemagic.util.RuneMagicTags;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -13,6 +18,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.Rarity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
@@ -53,11 +59,13 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
 				return ActionResultType.PASS;
 			}
 			
+			PlayerEntity player = context.getPlayer();
+			
 			BlockState state = world.getBlockState(context.getClickedPos());
 			if (state.getBlock().is(RuneMagicTags.Blocks.RUNES)) {
 				RuneMagicMod.LOGGER.info("glove used on rune{}", state);
 				AbstractRune rune = (AbstractRune) state.getBlock();
-				rune.activate(world, state, context.getClickedPos());
+				rune.activate(world, state, context.getClickedPos(), player);
 				return ActionResultType.SUCCESS;
 			}
 			return ActionResultType.FAIL;

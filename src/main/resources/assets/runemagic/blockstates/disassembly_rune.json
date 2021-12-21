@@ -1,0 +1,7 @@
+{
+  "variants" : {
+    "" : {
+      "model" : "runemagic:block/disassembly_rune"
+    }
+  }
+}

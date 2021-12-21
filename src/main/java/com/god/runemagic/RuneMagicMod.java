@@ -5,8 +5,7 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.god.runemagic.block.LimestoneBlock;
-import com.god.runemagic.common.TransmutationMap;
+import com.god.runemagic.common.data.ManaCapability;
 
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
@@ -14,8 +13,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -34,13 +35,19 @@ public class RuneMagicMod {
 			new ResourceLocation("runemagic", "runemagic"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
 	public RunemagicModElements elements;
+	@CapabilityInject(IEnergyStorage.class)
+	static Capability<IEnergyStorage> mana = null;
 
 	public RuneMagicMod() {
+		ManaCapability.register();
+		
 		elements = new RunemagicModElements();
 		FMLJavaModLoadingContext.get().getModEventBus().register(this);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientLoad);
 		MinecraftForge.EVENT_BUS.register(new RunemagicModFMLBusEvents(this));
+		
+//		MinecraftForge.EVENT_BUS.register(RuneMagicWorldEvents);
 	}
 
 	private void init(FMLCommonSetupEvent event) {
