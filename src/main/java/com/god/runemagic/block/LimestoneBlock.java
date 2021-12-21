@@ -62,4 +62,28 @@ public class LimestoneBlock extends RunemagicModElements.ModElement {
 			setRegistryName("limestone");
 		}
 	}
+
+	public static void addFeatureToBiomes(BiomeLoadingEvent event) {
+		RuneMagicMod.LOGGER.info("Adding limestone generation");
+		Feature<OreFeatureConfig> feature = new OreFeature(OreFeatureConfig.CODEC) {
+			public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos,
+					OreFeatureConfig config) {
+				RegistryKey<World> dimensionType = world.getLevel().dimension();
+				boolean dimensionCriteria = false;
+				if (dimensionType == World.OVERWORLD)
+					dimensionCriteria = true;
+				if (!dimensionCriteria)
+					return false;
+				return super.place(world, generator, rand, pos, config);
+			}
+		};
+		ConfiguredFeature<?, ?> configuredFeature = feature
+				.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE,
+						block.defaultBlockState(), 20))
+				.range(128).squared().count(20);
+		
+		Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, block.getRegistryName(), configuredFeature);
+		
+		event.getGeneration().getFeatures(GenerationStage.Decoration.UNDERGROUND_ORES).add(() -> configuredFeature);
+	}
 }
