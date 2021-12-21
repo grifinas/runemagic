@@ -1,0 +1,7 @@
+{
+	"replace": false,
+	"values": [
+		"runemagic:upgrade_rune",
+		"runemagic:downgrade_rune"
+	]
+}

@@ -1,0 +1,80 @@
+{
+  "minecraft:diorite" : {
+    "upgrade" : {
+      "result" : "runemagic:limestone",
+      "rate" : "1:1",
+      "cost" : 1
+    }
+  },
+  "runemagic:limestone" : {
+    "downgrade" : {
+      "result" : "minecraft:diorite",
+      "rate" : "1:1",
+      "cost" : 1
+    }
+  },
+  "minecraft:oak_log" : {
+    "upgrade" : {
+      "result" : "minecraft:coal",
+      "rate" : "1:1",
+      "cost" : 1.5
+    }
+  },
+  "minecraft:coal" : {
+    "upgrade" : {
+      "result" : "minecraft:iron_ingot",
+      "rate" : "4:1",
+      "cost" : 2.5
+    },
+    "downgrade" : {
+      "result" : "minecraft:oak_log",
+      "rate" : "1:1",
+      "cost" : 1.5
+    }
+  },
+  "minecraft:iron_ingot" : {
+    "upgrade" : {
+      "result" : "minecraft:gold_ingot",
+      "rate" : "4:1",
+      "cost" : 3.5
+    },
+    "downgrade" : {
+      "result" : "minecraft:coal",
+      "rate" : "1:4",
+      "cost" : 2.5
+    }
+  },
+  "minecraft:gold_ingot" : {
+    "upgrade" : {
+      "result" : "minecraft:diamond",
+      "rate" : "4:1",
+      "cost" : 5
+    },
+    "downgrade" : {
+      "result" : "minecraft:iron_ingot",
+      "rate" : "1:4",
+      "cost" : 3.5
+    }
+  },
+  "minecraft:diamond" : {
+    "downgrade" : {
+      "result" : "minecraft:gold_ingot",
+      "rate" : "1:4",
+      "cost" : 5
+    }
+  },
+  "minecraft:redstone" : {
+    "upgrade" : {
+      "result" : "minecraft:glowstone",
+      "rate" : "4:1",
+      "cost" : 2
+    }
+  },
+  "minecraft:glowstone" : {
+    "downgrade" : {
+      "result" : "minecraft:redstone",
+      "rate" : "1:4",
+      "cost" : 2
+    }
+  }
+}
