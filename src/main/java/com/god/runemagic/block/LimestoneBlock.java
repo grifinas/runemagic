@@ -2,38 +2,28 @@ package com.god.runemagic.block;
 
 import java.util.Random;
 
-import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.ISeedReader;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
-import net.minecraft.world.gen.feature.template.IRuleTestType;
-import net.minecraft.world.gen.feature.template.RuleTest;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
@@ -64,26 +54,18 @@ public class LimestoneBlock extends RunemagicModElements.ModElement {
 	}
 
 	public static void addFeatureToBiomes(BiomeLoadingEvent event) {
-		RuneMagicMod.LOGGER.info("Adding limestone generation");
 		Feature<OreFeatureConfig> feature = new OreFeature(OreFeatureConfig.CODEC) {
 			public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos,
 					OreFeatureConfig config) {
-				RegistryKey<World> dimensionType = world.getLevel().dimension();
-				boolean dimensionCriteria = false;
-				if (dimensionType == World.OVERWORLD)
-					dimensionCriteria = true;
-				if (!dimensionCriteria)
-					return false;
 				return super.place(world, generator, rand, pos, config);
 			}
 		};
-		ConfiguredFeature<?, ?> configuredFeature = feature
-				.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE,
-						block.defaultBlockState(), 20))
+		ConfiguredFeature<?, ?> configuredFeature = feature.configured(
+				new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, block.defaultBlockState(), 20))
 				.range(128).squared().count(20);
-		
+
 		Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, block.getRegistryName(), configuredFeature);
-		
+
 		event.getGeneration().getFeatures(GenerationStage.Decoration.UNDERGROUND_ORES).add(() -> configuredFeature);
 	}
 }

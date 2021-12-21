@@ -60,6 +60,7 @@ public abstract class AbstractRune extends Block {
 		world.removeBlock(position, false);
 		BlockState newState = this.getChangeState();
 		world.setBlock(position, newState, 0);
+		world.destroyBlock(position, false);
 	}
 	
 	protected abstract BlockState getChangeState();
@@ -82,7 +83,6 @@ public abstract class AbstractRune extends Block {
 			minZ = Math.min(minZ, position.getZ());
 			maxZ = Math.max(maxZ, position.getZ());
 
-			RuneMagicMod.LOGGER.info("activating pos: {}", position);
 			if (isActivatable(world, position)) {
 				world.destroyBlock(position, false);
 				toActivate.addAll(this.getNeighbours(position));
