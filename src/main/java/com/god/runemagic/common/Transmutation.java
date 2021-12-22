@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 
 public class Transmutation {
 	private String entity;
@@ -26,30 +25,31 @@ public class Transmutation {
 	}
 
 	public Result dryRun(ItemStack stack, Mana mana) {
-		int availableManaInstances = (int) (mana.getValue() / this.cost);
+		float manaCostPerInstance = this.cost * this.fromRate;
+		int availableManaInstances = (int) (mana.getValue() / manaCostPerInstance);
 		int stackInstances = stack.getCount() / this.fromRate;
-	
+
 		int realInstances = Math.min(availableManaInstances, stackInstances);
-		
+
 		int newEntityCount = realInstances * this.toRate;
 		int remainingOldEntities = stack.getCount() - (realInstances * this.fromRate);
-		float manaCost = realInstances * this.cost;
-		
+		float manaCost = realInstances * manaCostPerInstance;
+
 		return new Result(this.entity, newEntityCount, remainingOldEntities, manaCost);
 	}
-	
+
 	public Result transmute(World world, ItemEntity item, PlayerEntity player) {
 		Mana mana = ManaMap.get().getPlayerMana(player);
 		Result result = this.dryRun(item.getItem(), mana);
 
 		Item resultingItem = Registry.ITEM.get(new ResourceLocation(result.entity));
-		
+
 		ItemStack resultingItemStack = new ItemStack(resultingItem, result.newEntityCount);
 		ItemEntity resultingItemEntity = new ItemEntity(world, item.xo, item.yo, item.zo, resultingItemStack);
 		boolean added = world.addFreshEntity(resultingItemEntity);
-		
+
 		if (added) {
-			mana.setValue(mana.getValue() - (int)Math.floor(result.manaUsed));
+			mana.setValue(mana.getValue() - (int) Math.floor(result.manaUsed));
 
 			if (result.remainingOldEntities > 0) {
 				item.getItem().setCount(result.remainingOldEntities);
@@ -59,15 +59,15 @@ public class Transmutation {
 		} else {
 			RuneMagicMod.LOGGER.info("Failed to add entity {}", resultingItemEntity);
 		}
-		
+
 		RuneMagicMod.LOGGER.info("Finished transmutation with {}", mana);
-		
+
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return this.entity + "%d:%d, @%f".formatted(this.fromRate, this.toRate, this.cost);
+		return String.format("%d:%d, @%f", this.fromRate, this.toRate, this.cost);
 	}
 
 	public class Result {

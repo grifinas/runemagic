@@ -77,7 +77,7 @@ public class TransmutationMap {
 	}
 
 	private String getKey(ResourceLocation location) {
-		return "%s:%s".formatted(location.getNamespace(), location.getPath());
+		return String.format("%s:%s", location.getNamespace(), location.getPath());
 	}
 
 	private void parseTransmutationJson(JsonObject json) throws RuntimeException {

@@ -4,12 +4,10 @@ import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.block.runes.AbstractRune;
 import com.god.runemagic.common.ManaMap;
-import com.god.runemagic.common.ManaMap.Mana;
-import com.god.runemagic.common.data.IManaStorage;
-import com.god.runemagic.common.data.ManaCapability;
 import com.god.runemagic.util.RuneMagicTags;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -18,7 +16,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.Rarity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
@@ -66,6 +64,8 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
 				RuneMagicMod.LOGGER.info("glove used on rune{}", state);
 				AbstractRune rune = (AbstractRune) state.getBlock();
 				rune.activate(world, state, context.getClickedPos(), player);
+				//TODO resource leak?
+				Minecraft.getInstance().player.chat(String.format("Activated rune, %s", ManaMap.get().getPlayerMana(player)));
 				return ActionResultType.SUCCESS;
 			}
 			return ActionResultType.FAIL;

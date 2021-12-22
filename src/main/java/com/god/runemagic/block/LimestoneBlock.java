@@ -61,8 +61,8 @@ public class LimestoneBlock extends RunemagicModElements.ModElement {
 			}
 		};
 		ConfiguredFeature<?, ?> configuredFeature = feature.configured(
-				new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, block.defaultBlockState(), 20))
-				.range(128).squared().count(20);
+				new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, block.defaultBlockState(), 10))
+				.range(128).squared().count(10);
 
 		Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, block.getRegistryName(), configuredFeature);
 
