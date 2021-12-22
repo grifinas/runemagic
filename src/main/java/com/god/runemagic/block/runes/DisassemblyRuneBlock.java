@@ -8,6 +8,7 @@ import com.god.runemagic.common.DisassemblyMap;
 import com.god.runemagic.common.ManaMap;
 import com.god.runemagic.common.ManaMap.Mana;
 
+import com.god.runemagic.common.ManaMapSupplier;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -44,7 +45,7 @@ public class DisassemblyRuneBlock extends RunemagicModElements.ModElement {
 		@Override
 		protected boolean runeBehaviour(World world, BlockState state, BlockPos position, PlayerEntity player, List<ItemEntity> items) {
 			DisassemblyMap disassembly = DisassemblyMap.get();
-			Mana mana = ManaMap.get().getPlayerMana(player);
+			Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
 			
 			items.forEach(item -> {
 				int value = disassembly.findValue(item);

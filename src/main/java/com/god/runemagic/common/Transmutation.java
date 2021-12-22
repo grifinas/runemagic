@@ -39,7 +39,7 @@ public class Transmutation {
 	}
 
 	public Result transmute(World world, ItemEntity item, PlayerEntity player) {
-		Mana mana = ManaMap.get().getPlayerMana(player);
+		Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
 		Result result = this.dryRun(item.getItem(), mana);
 
 		Item resultingItem = Registry.ITEM.get(new ResourceLocation(result.entity));

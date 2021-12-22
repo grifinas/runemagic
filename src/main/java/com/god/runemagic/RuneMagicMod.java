@@ -2,6 +2,9 @@ package com.god.runemagic;
 
 import java.util.function.Supplier;
 
+import com.god.runemagic.common.ManaMap;
+import com.god.runemagic.common.ManaMapSupplier;
+import net.minecraft.world.server.ServerWorld;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,8 +49,6 @@ public class RuneMagicMod {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientLoad);
 		MinecraftForge.EVENT_BUS.register(new RunemagicModFMLBusEvents(this));
-		
-//		MinecraftForge.EVENT_BUS.register(RuneMagicWorldEvents);
 	}
 
 	private void init(FMLCommonSetupEvent event) {
@@ -93,6 +94,7 @@ public class RuneMagicMod {
 
 		@SubscribeEvent
 		public void serverLoad(FMLServerStartingEvent event) {
+			event.getServer().overworld().getChunkSource().getDataStorage().computeIfAbsent(new ManaMapSupplier(), ManaMap.NBT_KEY);
 			this.parent.elements.getElements().forEach(element -> element.serverLoad(event));
 		}
 	}

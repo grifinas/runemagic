@@ -4,6 +4,7 @@ import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.block.runes.AbstractRune;
 import com.god.runemagic.common.ManaMap;
+import com.god.runemagic.common.ManaMapSupplier;
 import com.god.runemagic.util.RuneMagicTags;
 
 import net.minecraft.block.BlockState;
@@ -65,7 +66,7 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
 				AbstractRune rune = (AbstractRune) state.getBlock();
 				rune.activate(world, state, context.getClickedPos(), player);
 				//TODO resource leak?
-				Minecraft.getInstance().player.chat(String.format("Activated rune, %s", ManaMap.get().getPlayerMana(player)));
+				Minecraft.getInstance().player.chat(String.format("Activated rune, %s", ManaMapSupplier.getStatic().getPlayerMana(player)));
 				return ActionResultType.SUCCESS;
 			}
 			return ActionResultType.FAIL;

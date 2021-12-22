@@ -1,58 +1,106 @@
 package com.god.runemagic.common;
 
+import com.god.runemagic.RuneMagicMod;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.storage.WorldSavedData;
+
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.entity.player.PlayerEntity;
+public class ManaMap extends WorldSavedData {
+    public static final String NBT_KEY = "mana_map";
 
-public class ManaMap {
-	private static ManaMap INSTANCE = null;
-	private Map<PlayerEntity, Mana> map;
+    private final Map<String, Mana> map;
 
-	public static ManaMap get() {
-		if (ManaMap.INSTANCE == null) {
-			ManaMap.INSTANCE = new ManaMap();
-		}
+    public ManaMap(String fileName) {
+        super(fileName);
+        RuneMagicMod.LOGGER.info("creating ManaMap");
+        this.map = new HashMap<>();
+    }
 
-		return ManaMap.INSTANCE;
-	}
+    public void addPlayer(PlayerEntity player) {
+        if (this.map.get(player.getStringUUID()) != null) {
+            return;
+        }
+        RuneMagicMod.LOGGER.info("Adding new player, existing data: {}", this.map);
+        this.map.put(player.getStringUUID(), new Mana(100, this));
+        this.setDirty();
+    }
 
-	public ManaMap() {
-		this.map = new HashMap<>();
-	}
+    public Mana getPlayerMana(PlayerEntity player) {
+        return this.map.get(player.getStringUUID());
+    }
 
-	public void addPlayer(PlayerEntity player) {
-		this.map.put(player, new Mana(100));
-	}
+    @Override
+    public void load(CompoundNBT nbt) {
+        RuneMagicMod.LOGGER.info("Loading mana");
+        CompoundNBT map = (CompoundNBT) nbt.get(NBT_KEY);
+        if (map == null) {
+            return;
+        }
+        map.getAllKeys().forEach(playerUUID -> {
+            this.map.put(playerUUID, Mana.fromNBT((CompoundNBT) map.get(playerUUID), this));
+        });
+    }
 
-	public Mana getPlayerMana(PlayerEntity player) {
-		return this.map.get(player);
-	}
+    @Override
+    public CompoundNBT save(CompoundNBT nbt) {
+        RuneMagicMod.LOGGER.info("Saving mana");
+        CompoundNBT map = new CompoundNBT();
+        this.map.forEach((playerUUID, mana) -> {
+            map.put(playerUUID, mana.toNBT());
+        });
+        nbt.put(NBT_KEY, map);
+        return map;
+    }
 
-	public static class Mana {
-		private int value;
-		private int maxValue;
+    public static class Mana {
+        private final int maxValue;
+        private final ManaMap parent;
+        private int value;
 
-		public Mana(int maxValue) {
-			this.maxValue = maxValue;
-			this.value = this.maxValue;
-		}
+        public Mana(int maxValue, ManaMap parent) {
+            this.maxValue = maxValue;
+            this.value = this.maxValue;
+            this.parent = parent;
+        }
 
-		public int getValue() {
-			return this.value;
-		}
+        public static Mana fromNBT(@Nullable CompoundNBT manaNBT, ManaMap parent) {
+            if (manaNBT == null) {
+                return new Mana(100, parent);
+            }
 
-		public int getMaxValue() {
-			return this.maxValue;
-		}
+            Mana mana = new Mana(manaNBT.getInt("maxMana"), parent);
+            mana.setValue(manaNBT.getInt("mana"));
+            return mana;
+        }
 
-		public void setValue(int value) {
-			this.value = Math.min(this.maxValue, value);
-		}
+        public int getValue() {
+            return this.value;
+        }
 
-		@Override
-		public String toString() {
-			return String.format("mana: %d/%d", this.value, this.maxValue);
-		}
-	}
+        public void setValue(int value) {
+            this.value = Math.min(this.maxValue, value);
+            this.parent.setDirty();
+        }
+
+        public int getMaxValue() {
+            return this.maxValue;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("mana: %d/%d", this.value, this.maxValue);
+        }
+
+        public CompoundNBT toNBT() {
+            CompoundNBT manaNBT = new CompoundNBT();
+            manaNBT.putInt("mana", this.getValue());
+            manaNBT.putInt("maxMana", this.getMaxValue());
+
+            return manaNBT;
+        }
+    }
 }
