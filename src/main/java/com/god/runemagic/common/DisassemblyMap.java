@@ -1,5 +1,15 @@
 package com.god.runemagic.common;
 
+import com.god.runemagic.RuneMagicMod;
+import com.god.runemagic.RunemagicModElements;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,69 +17,55 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.god.runemagic.RuneMagicMod;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+@RunemagicModElements.ModElement.Tag
+public class DisassemblyMap extends RunemagicModElements.ModElement {
+    private static DisassemblyMap instance = null;
+    private Map<String, Integer> disassemblies;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+    public DisassemblyMap(RunemagicModElements elements) {
+        super(elements, 200);
+        instance = this;
+    }
 
-public class DisassemblyMap {
-	public static enum TYPES {
-		UPGRADE, DOWNGRADE
-	}
+    public static DisassemblyMap get() {
+        return DisassemblyMap.instance;
+    }
 
-	private Map<String, Integer> disassemblies;
-	private static DisassemblyMap instance = null;
+    @Override
+    public void serverLoad(FMLServerStartingEvent event) {
+        ResourceLocation loc = new ResourceLocation(RuneMagicMod.MOD_ID + ":custom/disassembly.json");
+        InputStream in;
+        try {
+            in = event.getServer().getDataPackRegistries().getResourceManager().getResource(loc).getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            Gson gson = new Gson();
+            JsonElement je = gson.fromJson(reader, JsonElement.class);
+            JsonObject json = je.getAsJsonObject();
 
-	public static DisassemblyMap get() {
-		if (DisassemblyMap.instance == null) {
-			DisassemblyMap.instance = new DisassemblyMap();
-		}
+            this.disassemblies = new HashMap<>();
 
-		return DisassemblyMap.instance;
-	}
+            this.parseTransmutationJson(json);
+        } catch (IOException e) {
+            RuneMagicMod.LOGGER.info("disassembly behaviour errored out {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-	public DisassemblyMap() {
-		// TODO add all wool and all wood
-		ResourceLocation loc = new ResourceLocation(RuneMagicMod.MOD_ID + ":custom/disassembly.json");
-		InputStream in;
-		try {
-			in = Minecraft.getInstance().getResourceManager().getResource(loc).getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			Gson gson = new Gson();
-			JsonElement je = gson.fromJson(reader, JsonElement.class);
-			JsonObject json = je.getAsJsonObject();
+    public int findValue(ItemEntity item) {
+        return this.disassemblies.getOrDefault(getKey(item), 1) * item.getItem().getCount();
+    }
 
-			this.disassemblies = new HashMap<>();
+    private String getKey(ItemEntity item) {
+        return this.getKey(Registry.ITEM.getKey(item.getItem().getItem()));
+    }
 
-			this.parseTransmutationJson(json);
-		} catch (
+    private String getKey(ResourceLocation location) {
+        return String.format("%s:%s", location.getNamespace(), location.getPath());
+    }
 
-		IOException e) {
-			RuneMagicMod.LOGGER.info("transmutation behaviouir errored out {}", e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	public int findValue(ItemEntity item) {
-		return this.disassemblies.get(getKey(item)) * item.getItem().getCount();
-	}
-
-	private String getKey(ItemEntity item) {
-		return this.getKey(Registry.ITEM.getKey(item.getItem().getItem()));
-	}
-
-	private String getKey(ResourceLocation location) {
-		return String.format("%s:%s", location.getNamespace(), location.getPath());
-	}
-
-	private void parseTransmutationJson(JsonObject json) throws RuntimeException {
-		for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-			this.disassemblies.put(entry.getKey(), entry.getValue().getAsInt());
-		}
-	}
+    private void parseTransmutationJson(JsonObject json) throws RuntimeException {
+        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+            this.disassemblies.put(entry.getKey(), entry.getValue().getAsInt());
+        }
+    }
 }

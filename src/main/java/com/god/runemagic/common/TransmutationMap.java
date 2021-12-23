@@ -1,5 +1,15 @@
 package com.god.runemagic.common;
 
+import com.god.runemagic.RuneMagicMod;
+import com.god.runemagic.RunemagicModElements;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,119 +17,102 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.god.runemagic.RuneMagicMod;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+@RunemagicModElements.ModElement.Tag
+public class TransmutationMap extends RunemagicModElements.ModElement {
+    private static TransmutationMap instance = null;
+    private Map<String, Transmutation> upgrades;
+    private Map<String, Transmutation> downgrades;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+    public TransmutationMap(RunemagicModElements elements) {
+        super(elements, 200);
+        instance = this;
+    }
 
-public class TransmutationMap {
-	public static enum TYPES {
-		UPGRADE, DOWNGRADE
-	}
+    public static TransmutationMap get() {
+        return TransmutationMap.instance;
+    }
 
-	private Map<String, Transmutation> upgrades;
-	private Map<String, Transmutation> downgrades;
-	private static TransmutationMap instance = null;
+    @Override
+    public void serverLoad(FMLServerStartingEvent event) {
+        super.serverLoad(event);
 
-	public static TransmutationMap get() {
-		if (TransmutationMap.instance == null) {
-			TransmutationMap.instance = new TransmutationMap();
-		}
+        ResourceLocation loc = new ResourceLocation(RuneMagicMod.MOD_ID + ":custom/transmutation.json");
+        InputStream in;
+        try {
+            in = event.getServer().getDataPackRegistries().getResourceManager().getResource(loc).getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            Gson gson = new Gson();
+            JsonElement je = gson.fromJson(reader, JsonElement.class);
+            JsonObject json = je.getAsJsonObject();
 
-		return TransmutationMap.instance;
-	}
+            this.upgrades = new HashMap<>();
+            this.downgrades = new HashMap<>();
 
-	public TransmutationMap() {
-		// TODO add all wool and all wood
-		ResourceLocation loc = new ResourceLocation(RuneMagicMod.MOD_ID + ":custom/transmutation.json");
-		InputStream in;
-		try {
-			in = Minecraft.getInstance().getResourceManager().getResource(loc).getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			Gson gson = new Gson();
-			JsonElement je = gson.fromJson(reader, JsonElement.class);
-			JsonObject json = je.getAsJsonObject();
+            this.parseTransmutationJson(json);
 
-			this.upgrades = new HashMap<>();
-			this.downgrades = new HashMap<>();
+            RuneMagicMod.LOGGER.info("upgrades: {}, downgrades: {}", this.upgrades, this.downgrades);
+        } catch (IOException e) {
+            RuneMagicMod.LOGGER.info("transmutation behaviour errored out {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-			this.parseTransmutationJson(json);
+    public Transmutation findUpgrade(ItemEntity item) {
+        return this.upgrades.get(getKey(item));
+    }
 
-			RuneMagicMod.LOGGER.info("upgrades: {}, downgrades: {}", this.upgrades, this.downgrades);
-		} catch (
+    public Transmutation findDowngrade(ItemEntity item) {
+        return this.downgrades.get(getKey(item));
+    }
 
-		IOException e) {
-			RuneMagicMod.LOGGER.info("transmutation behaviouir errored out {}", e.getMessage());
-			e.printStackTrace();
-		}
-	}
+    private String getKey(ItemEntity item) {
+        return this.getKey(Registry.ITEM.getKey(item.getItem().getItem()));
+    }
 
-	public Transmutation findUpgrade(ItemEntity item) {
-		return this.upgrades.get(getKey(item));
-	}
+    private String getKey(ResourceLocation location) {
+        return String.format("%s:%s", location.getNamespace(), location.getPath());
+    }
 
-	public Transmutation findDowngrade(ItemEntity item) {
-		return this.downgrades.get(getKey(item));
-	}
+    private void parseTransmutationJson(JsonObject json) throws RuntimeException {
+        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+            String transmutationSubject = entry.getKey();
 
-	public boolean isTransmutable(ItemEntity item) {
-		String key = getKey(item);
-		return this.upgrades.containsKey(key) || this.downgrades.containsKey(key);
-	}
+            JsonElement transmutationRecipeElements = entry.getValue();
+            if (!transmutationRecipeElements.isJsonObject()) {
+                throw new RuntimeException("invalid transmutation.json structure");
+            }
 
-	private String getKey(ItemEntity item) {
-		return this.getKey(Registry.ITEM.getKey(item.getItem().getItem()));
-	}
+            JsonObject transmutationRecipes = transmutationRecipeElements.getAsJsonObject();
 
-	private String getKey(ResourceLocation location) {
-		return String.format("%s:%s", location.getNamespace(), location.getPath());
-	}
+            for (Map.Entry<String, JsonElement> recipe : transmutationRecipes.entrySet()) {
+                String stringRecipeType = recipe.getKey();
+                JsonElement recipeContents = recipe.getValue();
 
-	private void parseTransmutationJson(JsonObject json) throws RuntimeException {
-		for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-			String transmutationSubject = entry.getKey();
+                if (!recipeContents.isJsonObject()) {
+                    throw new RuntimeException("invalid transmutation.json structure");
+                }
 
-			JsonElement transmutationRecipeElements = entry.getValue();
-			if (!transmutationRecipeElements.isJsonObject()) {
-				throw new RuntimeException("invalid transmutation.json structure");
-			}
+                JsonObject tr = recipeContents.getAsJsonObject();
 
-			JsonObject transmutationRecipes = transmutationRecipeElements.getAsJsonObject();
+                Transmutation transmutation = this.buildTransmutation(tr);
+                if (stringRecipeType.contains("upgrade")) {
+                    this.upgrades.put(transmutationSubject, transmutation);
+                } else {
+                    this.downgrades.put(transmutationSubject, transmutation);
+                }
+            }
+        }
+    }
 
-			for (Map.Entry<String, JsonElement> recipe : transmutationRecipes.entrySet()) {
-				String stringRecipeType = recipe.getKey();
-				JsonElement recipeContents = recipe.getValue();
+    private Transmutation buildTransmutation(JsonObject tr) {
+        float cost = tr.get("cost").getAsFloat();
+        String rate = tr.get("rate").getAsString();
+        String result = tr.get("result").getAsString();
 
-				if (!recipeContents.isJsonObject()) {
-					throw new RuntimeException("invalid transmutation.json structure");
-				}
+        int fromToSeparator = rate.indexOf(':');
+        int fromRate = Integer.parseInt(rate.substring(0, fromToSeparator));
+        int toRate = Integer.parseInt(rate.substring(fromToSeparator + 1));
 
-				JsonObject tr = recipeContents.getAsJsonObject();
-
-				Transmutation transmutation = this.buildTransmutation(tr);
-				if (stringRecipeType.contains("upgrade")) {
-					this.upgrades.put(transmutationSubject, transmutation);
-				} else {
-					this.downgrades.put(transmutationSubject, transmutation);
-				}
-			}
-		}
-	}
-
-	private Transmutation buildTransmutation(JsonObject tr) {
-		float cost = tr.get("cost").getAsFloat();
-		String rate = tr.get("rate").getAsString();
-		String result = tr.get("result").getAsString();
-
-		int fromToSeparator = rate.indexOf(':');
-		int fromRate = Integer.parseInt(rate.substring(0, fromToSeparator));
-		int toRate = Integer.parseInt(rate.substring(fromToSeparator + 1));
-
-		return new Transmutation(result, fromRate, toRate, cost);
-	}
+        return new Transmutation(result, fromRate, toRate, cost);
+    }
 }

@@ -4,21 +4,14 @@ import java.util.function.Supplier;
 
 import com.god.runemagic.common.ManaMap;
 import com.god.runemagic.common.ManaMapSupplier;
-import net.minecraft.world.server.ServerWorld;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.god.runemagic.common.data.ManaCapability;
-
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -35,15 +28,11 @@ public class RuneMagicMod {
 	public static final Logger LOGGER = LogManager.getLogger(RuneMagicMod.class);
 	private static final String PROTOCOL_VERSION = "1";
 	public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation("runemagic", "runemagic"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
+			new ResourceLocation(MOD_ID, "runemagic"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
 	public RunemagicModElements elements;
-	@CapabilityInject(IEnergyStorage.class)
-	static Capability<IEnergyStorage> mana = null;
 
 	public RuneMagicMod() {
-		ManaCapability.register();
-		
 		elements = new RunemagicModElements();
 		FMLJavaModLoadingContext.get().getModEventBus().register(this);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
