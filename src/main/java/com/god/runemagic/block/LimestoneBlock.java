@@ -37,7 +37,7 @@ public class LimestoneBlock extends RunemagicModElements.ModElement {
 
 	@Override
 	public void initElements() {
-		elements.blocks.add(() -> new CustomBlock());
+		elements.blocks.add(CustomBlock::new);
 		// TODO Sometimes fails??
 		elements.items.add(() -> new BlockItem(block,
 				new Item.Properties().addToolType(ToolType.PICKAXE, 2).tab(ItemGroup.TAB_BUILDING_BLOCKS))

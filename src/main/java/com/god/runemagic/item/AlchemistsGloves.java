@@ -3,7 +3,6 @@ package com.god.runemagic.item;
 import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.block.runes.AbstractRune;
-import com.god.runemagic.common.ManaMap;
 import com.god.runemagic.common.ManaMapSupplier;
 import com.god.runemagic.util.RuneMagicTags;
 
@@ -17,7 +16,6 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.Rarity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
@@ -31,7 +29,7 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
 
 	@Override
 	public void initElements() {
-		elements.items.add(() -> new ItemCustom());
+		elements.items.add(ItemCustom::new);
 	}
 
 	public static class ItemCustom extends Item {
@@ -59,6 +57,7 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
 			}
 			
 			PlayerEntity player = context.getPlayer();
+			assert player != null;
 			
 			BlockState state = world.getBlockState(context.getClickedPos());
 			if (state.getBlock().is(RuneMagicTags.Blocks.RUNES)) {
