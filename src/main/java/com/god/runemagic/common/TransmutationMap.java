@@ -1,8 +1,7 @@
 package com.god.runemagic.common;
 
-import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
-import com.google.gson.Gson;
+import com.god.runemagic.util.ServerResourceReader;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.item.ItemEntity;
@@ -10,10 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,25 +32,10 @@ public class TransmutationMap extends RunemagicModElements.ModElement {
     public void serverLoad(FMLServerStartingEvent event) {
         super.serverLoad(event);
 
-        ResourceLocation loc = new ResourceLocation(RuneMagicMod.MOD_ID + ":custom/transmutation.json");
-        InputStream in;
-        try {
-            in = event.getServer().getDataPackRegistries().getResourceManager().getResource(loc).getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            Gson gson = new Gson();
-            JsonElement je = gson.fromJson(reader, JsonElement.class);
-            JsonObject json = je.getAsJsonObject();
+        this.upgrades = new HashMap<>();
+        this.downgrades = new HashMap<>();
 
-            this.upgrades = new HashMap<>();
-            this.downgrades = new HashMap<>();
-
-            this.parseTransmutationJson(json);
-
-            RuneMagicMod.LOGGER.info("upgrades: {}, downgrades: {}", this.upgrades, this.downgrades);
-        } catch (IOException e) {
-            RuneMagicMod.LOGGER.info("transmutation behaviour errored out {}", e.getMessage());
-            e.printStackTrace();
-        }
+        this.parseTransmutationJson(ServerResourceReader.fromEvent("transmutation.json", event));
     }
 
     public Transmutation findUpgrade(ItemEntity item) {
@@ -73,7 +54,10 @@ public class TransmutationMap extends RunemagicModElements.ModElement {
         return String.format("%s:%s", location.getNamespace(), location.getPath());
     }
 
-    private void parseTransmutationJson(JsonObject json) throws RuntimeException {
+    private void parseTransmutationJson(@Nullable JsonObject json) throws RuntimeException {
+        if (json == null) {
+            return;
+        }
         for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
             String transmutationSubject = entry.getKey();
 

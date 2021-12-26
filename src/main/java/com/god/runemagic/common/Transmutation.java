@@ -12,10 +12,10 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class Transmutation {
-	private String entity;
-	private int fromRate;
-	private int toRate;
-	private float cost;
+	private final String entity;
+	private final int fromRate;
+	private final int toRate;
+	private final float cost;
 
 	public Transmutation(String entity, int fromRate, int toRate, float cost) {
 		this.entity = entity;
@@ -24,8 +24,9 @@ public class Transmutation {
 		this.cost = cost;
 	}
 
-	public Result dryRun(ItemStack stack, Mana mana) {
-		float manaCostPerInstance = this.cost * this.fromRate;
+	public Result dryRun(ItemStack stack, Mana mana, Integer runeDiscount) {
+		int discount = Math.min(runeDiscount, 9);
+		float manaCostPerInstance = this.cost * this.fromRate * (1 - 0.05f * discount);
 		int availableManaInstances = (int) (mana.getValue() / manaCostPerInstance);
 		int stackInstances = stack.getCount() / this.fromRate;
 
@@ -38,9 +39,9 @@ public class Transmutation {
 		return new Result(this.entity, newEntityCount, remainingOldEntities, manaCost);
 	}
 
-	public Result transmute(World world, ItemEntity item, PlayerEntity player) {
+	public Result transmute(World world, ItemEntity item, PlayerEntity player, Integer runeDiscount) {
 		Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
-		Result result = this.dryRun(item.getItem(), mana);
+		Result result = this.dryRun(item.getItem(), mana, runeDiscount);
 
 		Item resultingItem = Registry.ITEM.get(new ResourceLocation(result.entity));
 

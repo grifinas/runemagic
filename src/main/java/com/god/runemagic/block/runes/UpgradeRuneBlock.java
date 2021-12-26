@@ -1,17 +1,14 @@
 package com.god.runemagic.block.runes;
 
-import java.util.List;
-
 import com.god.runemagic.RunemagicModElements;
+import com.god.runemagic.common.RuneActivationContext;
 import com.god.runemagic.common.Transmutation;
 import com.god.runemagic.common.TransmutationMap;
 import com.god.runemagic.item.ChalkItem;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -26,11 +23,13 @@ public class UpgradeRuneBlock extends RunemagicModElements.ModElement {
 
 	@Override
 	public void initElements() {
-		elements.blocks.add(() -> new CustomBlock());
+		elements.blocks.add(CustomBlock::new);
 		elements.items.add(() -> new ChalkItem.ItemCustom(block));
 	}
 
 	public static class CustomBlock extends AbstractRune {
+		private static final String CONTEXT_KEY = "upgrade_rune";
+
 		public CustomBlock() {
 			super();
 			setRegistryName("upgrade_rune");
@@ -42,13 +41,15 @@ public class UpgradeRuneBlock extends RunemagicModElements.ModElement {
 		}
 
 		@Override
-		protected boolean runeBehaviour(World world, BlockState state, BlockPos position, PlayerEntity player, List<ItemEntity> items) {
+		protected boolean runeBehaviour(RuneActivationContext context) {
 			TransmutationMap transmutation = TransmutationMap.get();
+			World world = context.getWorld();
+			PlayerEntity player = context.getPlayer();
 
-			items.forEach(item -> {
+			this.getSacrificedItems(context).forEach(item -> {
 				Transmutation tr = transmutation.findUpgrade(item);
 				if (tr != null) {
-					tr.transmute(world, item, player);
+					tr.transmute(world, item, player, context.count(this));
 				}
 			});
 			

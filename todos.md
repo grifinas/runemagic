@@ -5,9 +5,6 @@
     * Implement server-client communication
 * Add advancements to guide the player towards using alchemy
     * Needs research, might need to manually award recipes here
-* Implement transmutation rune scaling
-* Tweak disassembly balance
-  * maybe 0.5x multiplier for blocks and 1x for items? 
 * Fix localization bullshit
   * en_UK should not show translation strings
 * Rename disassembly to something else
