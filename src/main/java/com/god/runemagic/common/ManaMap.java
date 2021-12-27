@@ -56,14 +56,11 @@ public class ManaMap extends WorldSavedData {
         return map;
     }
 
-    public static class Mana {
-        private final int maxValue;
+    public static class Mana extends com.god.runemagic.common.Mana {
         private final ManaMap parent;
-        private int value;
 
         public Mana(int maxValue, ManaMap parent) {
-            this.maxValue = maxValue;
-            this.value = this.maxValue;
+            super(maxValue);
             this.parent = parent;
         }
 
@@ -77,22 +74,9 @@ public class ManaMap extends WorldSavedData {
             return mana;
         }
 
-        public int getValue() {
-            return this.value;
-        }
-
         public void setValue(int value) {
-            this.value = Math.min(this.maxValue, value);
+            super.setValue(value);
             this.parent.setDirty();
-        }
-
-        public int getMaxValue() {
-            return this.maxValue;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("mana: %d/%d", this.value, this.maxValue);
         }
 
         public CompoundNBT toNBT() {

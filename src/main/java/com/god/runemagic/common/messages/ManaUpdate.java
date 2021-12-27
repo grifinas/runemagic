@@ -1,22 +1,34 @@
 package com.god.runemagic.common.messages;
 
+import com.god.runemagic.RuneMagicMod;
 import net.minecraft.network.PacketBuffer;
 
-import java.util.function.BiConsumer;
+public class ManaUpdate {
+    private final int mana;
+    private final int maxMana;
 
-public class ManaUpdate implements BiConsumer<ManaUpdate, PacketBuffer> {
-
-    @Override
-    public void accept(ManaUpdate mana, PacketBuffer packetBuffer) {
-
+    public ManaUpdate(int mana, int maxMana) {
+        this.mana = mana;
+        this.maxMana = maxMana;
     }
 
-    public ManaUpdate decode(PacketBuffer packetBuffer) {
-        return new ManaUpdate();
+    public static ManaUpdate decode(PacketBuffer buffer) {
+        int mana = buffer.readVarInt();
+        int maxMana = buffer.readVarInt();
+        RuneMagicMod.LOGGER.info("running decode, {}/{}", mana, maxMana);
+        return new ManaUpdate(mana, maxMana);
     }
 
-    @Override
-    public BiConsumer<ManaUpdate, PacketBuffer> andThen(BiConsumer<? super ManaUpdate, ? super PacketBuffer> after) {
-        return BiConsumer.super.andThen(after);
+    public static void encode(ManaUpdate manaUpdate, PacketBuffer buffer) {
+        buffer.writeVarInt(manaUpdate.getMana());
+        buffer.writeVarInt(manaUpdate.getMaxMana());
+    }
+
+    public int getMana() {
+        return mana;
+    }
+
+    public int getMaxMana() {
+        return maxMana;
     }
 }

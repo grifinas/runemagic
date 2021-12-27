@@ -5,6 +5,7 @@ import com.god.runemagic.block.LimestoneBlock;
 import com.god.runemagic.common.ManaMapSupplier;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,8 +22,14 @@ public class RuneMagicWorldEvents {
 	@SubscribeEvent
 	public static void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof PlayerEntity && !event.getWorld().isClientSide) {
-//			event.addCapability(ManaCapability.RESOURCE, ManaCapability.createProvider(new DefaultManaCapability()));
 			ManaMapSupplier.getStatic().addPlayer((PlayerEntity) event.getEntity());
 		} 
+	}
+
+	@SubscribeEvent
+	public static void onRenderGameOverlayEvent(RenderGameOverlayEvent.Post event) {
+		if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT && !event.isCanceled()) {
+			RuneMagicMod.manaBar.render(event.getMatrixStack(), event.getPartialTicks());
+		}
 	}
 }

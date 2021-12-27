@@ -1,8 +1,5 @@
 #TODOS
 
-* Add UI for mana visibility
-    * Implement Gui stuff
-    * Implement server-client communication
 * Add advancements to guide the player towards using alchemy
     * Needs research, might need to manually award recipes here
 * Fix localization bullshit

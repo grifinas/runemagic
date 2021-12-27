@@ -1,5 +1,9 @@
 package com.god.runemagic;
 
+import com.god.runemagic.common.Mana;
+import com.god.runemagic.common.messages.ManaUpdate;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
@@ -11,7 +15,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.Item;
 import net.minecraft.entity.EntityType;
@@ -55,6 +58,16 @@ public class RunemagicModElements {
 		}
 		Collections.sort(elements);
 		elements.forEach(RunemagicModElements.ModElement::initElements);
+
+		this.addNetworkMessage(ManaUpdate.class, ManaUpdate::encode, ManaUpdate::decode, (ManaUpdate manaUpdate, Supplier<NetworkEvent.Context> supplier) -> {
+			NetworkEvent.Context context = supplier.get();
+			context.enqueueWork(() -> {
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+					RuneMagicMod.manaBar.setMana(new Mana(manaUpdate.getMaxMana(), manaUpdate.getMana()));
+				});
+			});
+			context.setPacketHandled(true);
+		});
 	}
 
 	public void registerSounds(RegistryEvent.Register<net.minecraft.util.SoundEvent> event) {

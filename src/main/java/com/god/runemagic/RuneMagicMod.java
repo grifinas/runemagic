@@ -4,6 +4,8 @@ import java.util.function.Supplier;
 
 import com.god.runemagic.common.ManaMap;
 import com.god.runemagic.common.ManaMapSupplier;
+import com.god.runemagic.gui.ManaBarGui;
+import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraft.block.Block;
@@ -31,6 +33,7 @@ public class RuneMagicMod {
 			new ResourceLocation(MOD_ID, "runemagic"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
 	public RunemagicModElements elements;
+	public static ManaBarGui manaBar;
 
 	public RuneMagicMod() {
 		elements = new RunemagicModElements();
@@ -46,6 +49,8 @@ public class RuneMagicMod {
 
 	public void clientLoad(FMLClientSetupEvent event) {
 		elements.getElements().forEach(element -> element.clientLoad(event));
+		// TODO make into an element
+		manaBar = new ManaBarGui(Minecraft.getInstance());
 	}
 
 	@SubscribeEvent

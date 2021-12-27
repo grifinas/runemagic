@@ -3,19 +3,21 @@ package com.god.runemagic.item;
 import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.block.runes.AbstractRune;
+import com.god.runemagic.common.Mana;
+import com.god.runemagic.common.ManaMap;
 import com.god.runemagic.common.ManaMapSupplier;
+import com.god.runemagic.common.messages.ManaUpdate;
+import com.god.runemagic.gui.ManaBarGui;
 import com.god.runemagic.util.RuneMagicTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ObjectHolder;
 
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 @RunemagicModElements.ModElement.Tag
 public class AlchemistsGloves extends RunemagicModElements.ModElement {
@@ -38,16 +40,6 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
         }
 
         @Override
-        public int getUseDuration(ItemStack itemstack) {
-            return 0;
-        }
-
-        @Override
-        public float getDestroySpeed(ItemStack par1ItemStack, BlockState par2Block) {
-            return 1F;
-        }
-
-        @Override
         public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
             World world = context.getLevel();
 
@@ -63,15 +55,13 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
                 RuneMagicMod.LOGGER.info("glove used on rune {}", state);
                 AbstractRune rune = (AbstractRune) state.getBlock();
                 rune.activate(world, state, context.getClickedPos(), player);
-                //TODO resource leak?
-//				Minecraft.getInstance().player.chat(String.format("Activated rune, %s", ManaMapSupplier.getStatic().getPlayerMana(player)));
 
                 ServerPlayerEntity serverPlayer = world.getServer().getPlayerList().getPlayer(player.getUUID());
                 assert serverPlayer != null;
 
-				String message = String.format("Activated rune, %s", ManaMapSupplier.getStatic().getPlayerMana(player));
-				UUID uuid = UUID.nameUUIDFromBytes((message).getBytes(StandardCharsets.UTF_8));
-                serverPlayer.sendMessage(new StringTextComponent(message), uuid);
+                Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
+
+                RuneMagicMod.PACKET_HANDLER.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new ManaUpdate(mana.getValue(), mana.getMaxValue()));
 
                 return ActionResultType.SUCCESS;
             }
