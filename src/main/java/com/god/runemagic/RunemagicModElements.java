@@ -1,6 +1,5 @@
 package com.god.runemagic;
 
-import com.god.runemagic.common.entities.Mana;
 import com.god.runemagic.common.messages.ManaUpdate;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -62,7 +61,7 @@ public class RunemagicModElements {
 			NetworkEvent.Context context = supplier.get();
 			context.enqueueWork(() -> {
 				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-					RuneMagicMod.manaBar.setMana(new Mana(manaUpdate.getMaxMana(), manaUpdate.getMana()));
+					RuneMagicMod.manaBar.setMana(manaUpdate);
 				});
 			});
 			context.setPacketHandled(true);

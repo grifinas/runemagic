@@ -3,9 +3,6 @@ package com.god.runemagic.item;
 import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.block.runes.AbstractRune;
-import com.god.runemagic.common.entities.Mana;
-import com.god.runemagic.common.ManaMapSupplier;
-import com.god.runemagic.common.messages.ManaUpdate;
 import com.god.runemagic.util.RuneMagicTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +10,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ObjectHolder;
 
 
@@ -56,10 +52,6 @@ public class AlchemistsGloves extends RunemagicModElements.ModElement {
 
                 ServerPlayerEntity serverPlayer = world.getServer().getPlayerList().getPlayer(player.getUUID());
                 assert serverPlayer != null;
-
-                Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
-
-                RuneMagicMod.PACKET_HANDLER.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new ManaUpdate(mana.getValue(), mana.getMaxValue()));
 
                 return ActionResultType.SUCCESS;
             }

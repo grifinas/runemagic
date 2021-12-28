@@ -7,6 +7,7 @@ import com.god.runemagic.common.ManaMapSupplier;
 import com.god.runemagic.common.entities.RuneActivationContext;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -40,12 +41,14 @@ public class DisassemblyRuneBlock extends RunemagicModElements.ModElement {
             DisassemblyMap disassembly = DisassemblyMap.get();
             PlayerEntity player = context.getPlayer();
             Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
+            int totalGain = 0;
 
-            this.getSacrificedItems(context).forEach(item -> {
-                int value = (int) disassembly.findValue(item);
+            for (ItemEntity item: this.getSacrificedItems(context)) {
+                totalGain += (int) disassembly.findValue(item);
                 item.remove();
-                mana.setValue(mana.getValue() + value);
-            });
+            }
+
+            mana.increment(totalGain);
 
             return true;
         }

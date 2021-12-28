@@ -56,10 +56,7 @@ public class SpellScroll extends RunemagicModElements.ModElement {
 
 			world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.GHAST_SHOOT, SoundCategory.NEUTRAL, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
 			if (!world.isClientSide) {
-				ServerPlayerEntity serverPlayer = world.getServer().getPlayerList().getPlayer(playerEntity.getUUID());
 				mana.decrement(100);
-				RuneMagicMod.PACKET_HANDLER.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new ManaUpdate(mana.getValue(), mana.getMaxValue()));
-
 
 				Vector3d lookAngle = playerEntity.getLookAngle();
 

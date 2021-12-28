@@ -3,6 +3,7 @@ package com.god.runemagic.common;
 import com.god.runemagic.RuneMagicMod;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.WorldSavedData;
 
 import javax.annotation.Nullable;
@@ -25,7 +26,7 @@ public class ManaMap extends WorldSavedData {
             return;
         }
         RuneMagicMod.LOGGER.info("Adding new player, existing data: {}", this.map);
-        this.map.put(player.getStringUUID(), new Mana(100, this));
+        this.map.put(player.getStringUUID(), new Mana(100, this, player));
         this.setDirty();
     }
 
@@ -41,7 +42,8 @@ public class ManaMap extends WorldSavedData {
             return;
         }
         map.getAllKeys().forEach(playerUUID -> {
-            this.map.put(playerUUID, Mana.fromNBT((CompoundNBT) map.get(playerUUID), this));
+            // TODO null as player is a bug waiting to happen
+            this.map.put(playerUUID, Mana.fromNBT((CompoundNBT) map.get(playerUUID), this, null));
         });
     }
 
@@ -59,17 +61,17 @@ public class ManaMap extends WorldSavedData {
     public static class Mana extends com.god.runemagic.common.entities.Mana {
         private final ManaMap parent;
 
-        public Mana(int maxValue, ManaMap parent) {
-            super(maxValue);
+        public Mana(int maxValue, ManaMap parent, PlayerEntity player) {
+            super(maxValue, player);
             this.parent = parent;
         }
 
-        public static Mana fromNBT(@Nullable CompoundNBT manaNBT, ManaMap parent) {
+        public static Mana fromNBT(@Nullable CompoundNBT manaNBT, ManaMap parent, PlayerEntity player) {
             if (manaNBT == null) {
-                return new Mana(100, parent);
+                return new Mana(100, parent, player);
             }
 
-            Mana mana = new Mana(manaNBT.getInt("maxMana"), parent);
+            Mana mana = new Mana(manaNBT.getInt("maxMana"), parent, player);
             mana.setValue(manaNBT.getInt("mana"));
             return mana;
         }

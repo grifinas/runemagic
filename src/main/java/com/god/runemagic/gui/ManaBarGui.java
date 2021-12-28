@@ -1,7 +1,7 @@
 package com.god.runemagic.gui;
 
 import com.god.runemagic.RuneMagicMod;
-import com.god.runemagic.common.entities.Mana;
+import com.god.runemagic.common.messages.ManaUpdate;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -23,8 +23,8 @@ public class ManaBarGui extends AbstractGui {
         this.minecraft = minecraft;
     }
 
-    public void setMana(Mana mana) {
-        this.emptyBars = MAX_BUBBLES - mana.getValue() / (mana.getMaxValue() / 10);
+    public void setMana(ManaUpdate mana) {
+        this.emptyBars = MAX_BUBBLES - mana.getMana() / (mana.getMaxMana() / 10);
         RuneMagicMod.LOGGER.info("got mana {}, calculated empty bars {}", mana, this.emptyBars);
     }
 
