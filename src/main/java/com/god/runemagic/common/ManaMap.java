@@ -56,7 +56,7 @@ public class ManaMap extends WorldSavedData {
         return map;
     }
 
-    public static class Mana extends com.god.runemagic.common.Mana {
+    public static class Mana extends com.god.runemagic.common.entities.Mana {
         private final ManaMap parent;
 
         public Mana(int maxValue, ManaMap parent) {

@@ -1,4 +1,4 @@
-package com.god.runemagic.common;
+package com.god.runemagic.common.entities;
 
 public class Mana {
     protected final int maxValue;
@@ -19,7 +19,15 @@ public class Mana {
     }
 
     public void setValue(int value) {
-        this.value = Math.min(this.maxValue, value);
+        this.value = Math.max(Math.min(this.maxValue, value), 0);
+    }
+
+    public void decrement(int value) {
+        this.setValue(this.value - value);
+    }
+
+    public void increment(int value) {
+        this.setValue(this.value + value);
     }
 
     public int getMaxValue() {

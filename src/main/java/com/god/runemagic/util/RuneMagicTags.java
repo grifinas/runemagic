@@ -19,9 +19,6 @@ public class RuneMagicTags {
 	}
 	
 	public static class Items {
-		public static final Tags.IOptionalNamedTag<Item> TRANSMUTABLE_ITEM = createTag("transmutable_item");
-		
-		
 		private static Tags.IOptionalNamedTag<Item> createTag(String name) {
 			return ItemTags.createOptional(new ResourceLocation(RuneMagicMod.MOD_ID, name));
 		}

@@ -1,7 +1,7 @@
 package com.god.runemagic.gui;
 
 import com.god.runemagic.RuneMagicMod;
-import com.god.runemagic.common.Mana;
+import com.god.runemagic.common.entities.Mana;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;

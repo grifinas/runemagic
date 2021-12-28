@@ -1,7 +1,7 @@
 package com.god.runemagic.block.runes;
 
 import com.god.runemagic.RunemagicModElements;
-import com.god.runemagic.common.RuneActivationContext;
+import com.god.runemagic.common.entities.RuneActivationContext;
 import com.god.runemagic.common.Transmutation;
 import com.god.runemagic.common.TransmutationMap;
 

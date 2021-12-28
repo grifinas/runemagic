@@ -1,11 +1,11 @@
 package com.god.runemagic.block.runes;
 
 import com.god.runemagic.RunemagicModElements;
-import com.god.runemagic.common.RuneActivationContext;
+import com.god.runemagic.common.entities.RuneActivationContext;
 import com.god.runemagic.common.Transmutation;
 import com.god.runemagic.common.TransmutationMap;
-import com.god.runemagic.item.ChalkItem;
 
+import com.god.runemagic.item.chalk.AbstractChalk;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,12 +24,10 @@ public class UpgradeRuneBlock extends RunemagicModElements.ModElement {
 	@Override
 	public void initElements() {
 		elements.blocks.add(CustomBlock::new);
-		elements.items.add(() -> new ChalkItem.ItemCustom(block));
+		elements.items.add(() -> new AbstractChalk(block));
 	}
 
 	public static class CustomBlock extends AbstractRune {
-		private static final String CONTEXT_KEY = "upgrade_rune";
-
 		public CustomBlock() {
 			super();
 			setRegistryName("upgrade_rune");

@@ -1,0 +1,7 @@
+{
+  "variants" : {
+    "" : {
+      "model" : "runemagic:block/destruction_rune"
+    }
+  }
+}

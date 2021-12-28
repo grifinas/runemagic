@@ -1,4 +1,4 @@
-package com.god.runemagic.common;
+package com.god.runemagic.common.entities;
 
 import com.god.runemagic.block.runes.AbstractRune;
 import net.minecraft.block.BlockState;

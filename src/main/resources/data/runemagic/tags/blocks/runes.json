@@ -3,6 +3,7 @@
 	"values": [
 		"runemagic:upgrade_rune",
 		"runemagic:downgrade_rune",
-		"runemagic:disassembly_rune"
+		"runemagic:disassembly_rune",
+		"runemagic:destruction_rune"
 	]
 }

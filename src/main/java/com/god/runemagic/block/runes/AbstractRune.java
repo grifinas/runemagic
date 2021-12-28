@@ -1,7 +1,7 @@
 package com.god.runemagic.block.runes;
 
 import com.god.runemagic.RuneMagicMod;
-import com.god.runemagic.common.RuneActivationContext;
+import com.god.runemagic.common.entities.RuneActivationContext;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -19,6 +19,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public abstract class AbstractRune extends Block {
@@ -76,13 +77,15 @@ public abstract class AbstractRune extends Block {
     }
 
     public void changeType(World world, BlockPos position) {
-        world.removeBlock(position, false);
         BlockState newState = this.getChangeState();
-        world.destroyBlock(position, false);
+        if (newState == null) {
+            return;
+        }
+        world.removeBlock(position, false);
         world.setBlock(position, newState, 0);
     }
 
-    protected abstract BlockState getChangeState();
+    protected abstract @Nullable BlockState getChangeState();
 
     protected void activateNeighbours(RuneActivationContext context) {
         Stack<BlockPos> toActivate = new Stack<BlockPos>();

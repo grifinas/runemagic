@@ -4,16 +4,11 @@ import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.common.DisassemblyMap;
 import com.god.runemagic.common.ManaMap.Mana;
 import com.god.runemagic.common.ManaMapSupplier;
-import com.god.runemagic.common.RuneActivationContext;
+import com.god.runemagic.common.entities.RuneActivationContext;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
-
-import java.util.List;
 
 @RunemagicModElements.ModElement.Tag
 public class DisassemblyRuneBlock extends RunemagicModElements.ModElement {

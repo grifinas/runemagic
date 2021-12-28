@@ -1,8 +1,7 @@
 package com.god.runemagic;
 
-import com.god.runemagic.common.Mana;
+import com.god.runemagic.common.entities.Mana;
 import com.god.runemagic.common.messages.ManaUpdate;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.network.NetworkEvent;

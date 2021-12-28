@@ -12,6 +12,9 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RunemagicModElements.ModElement.Tag
 public class TransmutationMap extends RunemagicModElements.ModElement {
@@ -39,11 +42,35 @@ public class TransmutationMap extends RunemagicModElements.ModElement {
     }
 
     public Transmutation findUpgrade(ItemEntity item) {
-        return this.upgrades.get(getKey(item));
+        String key = getKey(item);
+        Transmutation custom = this.customBehaviour(key);
+        if (custom == null) {
+            return this.upgrades.get(key);
+        }
+
+        return custom;
     }
 
     public Transmutation findDowngrade(ItemEntity item) {
         return this.downgrades.get(getKey(item));
+    }
+
+    private @Nullable Transmutation customBehaviour(String key) {
+        return this.customWoolBehaviour(key);
+    }
+
+    private @Nullable Transmutation customWoolBehaviour(String key) {
+        Pattern woolColorRegex = Pattern.compile("minecraft:([a-z_]+)_wool");
+        Matcher m = woolColorRegex.matcher(key);
+        if (m.matches()) {
+            String woolColor = m.group(1);
+            String dyeName = String.format("minecraft:%s_dye", woolColor);
+            if (Registry.ITEM.containsKey(new ResourceLocation(dyeName))) {
+                return new Transmutation(dyeName, 1, 1, 2);
+            }
+        }
+
+        return null;
     }
 
     private String getKey(ItemEntity item) {

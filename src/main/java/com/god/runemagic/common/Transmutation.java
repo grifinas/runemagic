@@ -50,7 +50,7 @@ public class Transmutation {
 		boolean added = world.addFreshEntity(resultingItemEntity);
 
 		if (added) {
-			mana.setValue(mana.getValue() - (int) Math.floor(result.manaUsed));
+			mana.decrement((int) Math.floor(result.manaUsed));
 
 			if (result.remainingOldEntities > 0) {
 				item.getItem().setCount(result.remainingOldEntities);
