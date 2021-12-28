@@ -5,6 +5,8 @@ import com.god.runemagic.block.LimestoneBlock;
 import com.god.runemagic.common.ManaMapSupplier;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -27,6 +29,7 @@ public class RuneMagicWorldEvents {
 	}
 
 	@SubscribeEvent
+	@OnlyIn(Dist.CLIENT)
 	public static void onRenderGameOverlayEvent(RenderGameOverlayEvent.Post event) {
 		if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT && !event.isCanceled()) {
 			RuneMagicMod.manaBar.render(event.getMatrixStack(), event.getPartialTicks());

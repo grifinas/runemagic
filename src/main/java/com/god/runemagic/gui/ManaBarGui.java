@@ -12,9 +12,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ManaBarGui extends AbstractGui {
     public static int foo = 0;
-    private static int MAX_BUBBLES = 10;
-    private static int TEXTURE_SIZE = 9;
-    private static int SCALE = 1;
+    private static final int MAX_BUBBLES = 10;
+    private static final int TEXTURE_SIZE = 9;
+    private static final int SCALE = 1;
     private final ResourceLocation GUI = new ResourceLocation(RuneMagicMod.MOD_ID, "textures/gui/mana_bar.png");
     private final Minecraft minecraft;
     private int emptyBars = 0;

@@ -6,6 +6,8 @@ import com.god.runemagic.common.ManaMap;
 import com.god.runemagic.common.ManaMapSupplier;
 import com.god.runemagic.gui.ManaBarGui;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraft.block.Block;
@@ -33,6 +35,7 @@ public class RuneMagicMod {
 			new ResourceLocation(MOD_ID, "runemagic"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
 	public RunemagicModElements elements;
+	@OnlyIn(Dist.CLIENT)
 	public static ManaBarGui manaBar;
 
 	public RuneMagicMod() {
