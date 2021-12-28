@@ -113,10 +113,10 @@ Created by using red Chalk on the ground.
 ### Usage
 **Sacrifice** Fire charge
 
-**Activating** the circle consts 10 mana per connected circle. On success, creates a scroll of fire ball.
+**Activating** the circle consts 10 mana per connected circle. On success, creates a scroll of fireball.
 * For every connected Destruction circle, increases fireball damage by 1 (up to 9).
-* For every 3 connected Conjuration circles (up to 9) creates an additional fire ball.
-* For every connected Alteration Meditation circle (up to 9), decreases fire ball casting price by 8%
+* For every 3 connected Conjuration circles (up to 9) creates an additional fireball.
+* For every connected Alteration Meditation circle (up to 9), decreases fireball casting price by 8%
 
 ## **Flesh sacrifice circle**
 Created by using black Chalk on the ground.
@@ -165,6 +165,7 @@ Created by using black Chalk on the ground.
 ## Alchemists' gloves
 * Does not generate in the world
 * Crafted:
+
 ||||
 |---|---|---|
 ||L||
@@ -179,6 +180,7 @@ Created by using black Chalk on the ground.
 * Crafted from Philosopher shards:
 
 Philosopher shard = P
+
 ||||
 |---|---|---|
 |P|P|P|
