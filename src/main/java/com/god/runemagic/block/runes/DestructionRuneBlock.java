@@ -3,6 +3,7 @@ package com.god.runemagic.block.runes;
 
 import com.god.runemagic.RunemagicModElements;
 import com.god.runemagic.common.entities.RuneActivationContext;
+import com.god.runemagic.common.spells.FireBallSpell;
 import com.god.runemagic.item.SpellScroll;
 import com.god.runemagic.item.chalk.AbstractChalk;
 import net.minecraft.block.Block;
@@ -48,8 +49,7 @@ public class DestructionRuneBlock extends RunemagicModElements.ModElement {
                     }
                     stack.setCount(count - 3);
 
-                    ItemStack resultingItemStack = new ItemStack(SpellScroll.block, 1);
-                    ItemEntity resultingItemEntity = new ItemEntity(context.getWorld(), itemEntity.xo, itemEntity.yo, itemEntity.zo, resultingItemStack);
+                    ItemEntity resultingItemEntity = new ItemEntity(context.getWorld(), itemEntity.xo, itemEntity.yo, itemEntity.zo, SpellScroll.makeSpellScroll(new FireBallSpell(100)));
                     boolean added = context.getWorld().addFreshEntity(resultingItemEntity);
                 }
             });

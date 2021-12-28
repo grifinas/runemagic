@@ -1,73 +1,73 @@
 package com.god.runemagic.item;
 
-import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
-import com.god.runemagic.common.ManaMapSupplier;
-import com.god.runemagic.common.entities.Mana;
-import com.god.runemagic.common.messages.ManaUpdate;
+import com.god.runemagic.common.spells.AbstractSpell;
+import com.god.runemagic.common.spells.FireBallSpell;
+import com.god.runemagic.util.SpellProvider;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
 public class SpellScroll extends RunemagicModElements.ModElement {
-	@ObjectHolder("runemagic:spell_scroll")
-	public static final Item block = null;
+    @ObjectHolder("runemagic:spell_scroll")
+    public static final Item block = null;
 
-	public SpellScroll(RunemagicModElements instance) {
-		super(instance, 4);
-	}
+    public SpellScroll(RunemagicModElements instance) {
+        super(instance, 4);
+    }
 
-	@Override
-	public void initElements() {
-		elements.items.add(() -> new ItemCustom());
-	}
+    @Override
+    public void initElements() {
+        elements.items.add(ItemCustom::new);
+    }
 
-	public static class ItemCustom extends Item {
-		public ItemCustom() {
-			super(new Properties().tab(ItemGroup.TAB_MISC).stacksTo(1).rarity(Rarity.RARE));
-			setRegistryName("spell_scroll");
-		}
+    public static ItemStack makeSpellScroll(AbstractSpell spell) {
+        ItemStack resultingItemStack = new ItemStack(block, 1);
 
-		@Override
-		public ItemStack getContainerItem(ItemStack itemstack) {
-			return new ItemStack(this);
-		}
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.put(SpellProvider.SPELL_KEY, spell.toNBT());
+        resultingItemStack.setTag(nbt);
+        return resultingItemStack;
+    }
 
-		public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
-			Mana mana = ManaMapSupplier.getStatic().getPlayerMana(playerEntity);
-			ItemStack itemstack = playerEntity.getItemInHand(hand);
+    public static class ItemCustom extends Item {
+        public ItemCustom() {
+            super(new Properties().tab(ItemGroup.TAB_MISC).stacksTo(1).rarity(Rarity.RARE));
+            setRegistryName("spell_scroll");
+        }
 
-			if (mana.getValue() < 100) {
-				return ActionResult.fail(itemstack);
-			}
+        @Override
+        public ItemStack getContainerItem(ItemStack itemstack) {
+            return new ItemStack(this);
+        }
 
-			world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.GHAST_SHOOT, SoundCategory.NEUTRAL, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
-			if (!world.isClientSide) {
-				mana.decrement(100);
+        public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
+            ItemStack itemstack = playerEntity.getItemInHand(hand);
 
-				Vector3d lookAngle = playerEntity.getLookAngle();
+            AbstractSpell spell = SpellProvider.get(itemstack);
+            if (spell == null) {
+                return ActionResult.pass(itemstack);
+            }
 
-				FireballEntity fireballentity = new FireballEntity(world, playerEntity, lookAngle.x, lookAngle.y, lookAngle.z);
-				fireballentity.explosionPower = 1;
-				fireballentity.setPos(playerEntity.getX(), playerEntity.getY(0.5D), fireballentity.getZ());
-				fireballentity.setDeltaMovement(lookAngle.scale(2D));
-				world.addFreshEntity(fireballentity);
-			}
+            ActionResultType result = spell.spellBehaviour(world, playerEntity, itemstack);
 
-			return ActionResult.sidedSuccess(itemstack, world.isClientSide());
-		}
-	}
+            switch (result) {
+                case FAIL:
+                    return ActionResult.fail(itemstack);
+                case SUCCESS:
+                    return ActionResult.sidedSuccess(itemstack, world.isClientSide());
+                case PASS:
+                default:
+                    return ActionResult.pass(itemstack);
+            }
+        }
+    }
 }

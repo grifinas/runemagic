@@ -3,7 +3,6 @@ package com.god.runemagic.common;
 import com.god.runemagic.RuneMagicMod;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.WorldSavedData;
 
 import javax.annotation.Nullable;
