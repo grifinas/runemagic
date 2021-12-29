@@ -73,7 +73,7 @@ public abstract class AbstractRune extends Block {
     /**
      * When rune is chain activated by one of it's neighbours
      */
-    public void chainActivate(RuneActivationContext context) {
+    public void chainActivate(RuneActivationContext context, BlockPos position) {
     }
 
     public void changeType(World world, BlockPos position) {
@@ -106,7 +106,7 @@ public abstract class AbstractRune extends Block {
             if (world.getBlockState(position).getBlock().is(this)) {
                 // TODO maybe use tags or something to not always get as chainActivate is nothing by default
                 AbstractRune rune = ((AbstractRune) world.getBlockState(position).getBlock());
-                rune.chainActivate(context);
+                rune.chainActivate(context, position);
                 context.activateRune(rune);
                 activated.add(position);
                 toActivate.addAll(this.getNeighbours(position));

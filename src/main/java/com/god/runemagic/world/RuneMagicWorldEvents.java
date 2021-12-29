@@ -4,6 +4,7 @@ import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.block.LimestoneBlock;
 import com.god.runemagic.common.ManaMapSupplier;
 
+import com.god.runemagic.common.RuneMetaMapSupplier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,6 +26,7 @@ public class RuneMagicWorldEvents {
 	public static void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof PlayerEntity && !event.getWorld().isClientSide) {
 			ManaMapSupplier.getStatic().addPlayer((PlayerEntity) event.getEntity());
+			RuneMetaMapSupplier.getStatic().addPlayer((PlayerEntity) event.getEntity());
 		} 
 	}
 
