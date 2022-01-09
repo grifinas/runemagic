@@ -58,14 +58,14 @@ Every adjacent Transmutation Downgrade Circle increases effectiveness by 5% up t
 
 **Available transmutations**
 
-|   From    |   To      |   Conversion rate |   Cost    |   Cost/stack @+40%    | 
-|-----------|-----------|-------------------|-----------|-----------------------|
-| Coal      | Wood      |   1:1             |   1.5     |   57,6                |
-| Iron      | Coal      |   4:1             |   2.5     |   96                  |
-| Gold      | Iron      |   4:1             |   3.5     |   134,4               |
-| Diamond   | Gold      |   4:1             |   5       |   192                 |
-| Philosopher shard | Diamond   |   4:1     |   10      |   384                 |
-| Glowstone dust | Glowstone dust   |   4:1 |   2       |   76,8                |
+|   From    | To            |   Conversion rate |   Cost    |   Cost/stack @+40%    | 
+|-----------|---------------|-------------------|-----------|-----------------------|
+| Coal      | Wood          |   1:1             |   1.5     |   57,6                |
+| Iron      | Coal          |   4:1             |   2.5     |   96                  |
+| Gold      | Iron          |   4:1             |   3.5     |   134,4               |
+| Diamond   | Gold          |   4:1             |   5       |   192                 |
+| Philosopher shard | Diamond       |   4:1     |   10      |   384                 |
+| Glowstone dust | Redstone dust |   4:1 |   2       |   76,8                |
 
 
 ## **Disassembly circle**

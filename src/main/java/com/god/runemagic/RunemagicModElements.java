@@ -47,7 +47,7 @@ public class RunemagicModElements {
 			for (ModFileScanData.AnnotationData annotationData : annotations) {
 				if (annotationData.getAnnotationType().getClassName().equals(ModElement.Tag.class.getName())) {
 					Class<?> clazz = Class.forName(annotationData.getClassType().getClassName());
-					if (clazz.getSuperclass() == RunemagicModElements.ModElement.class)
+					if (clazz.getSuperclass() == RunemagicModElements.ModElement.class || clazz.getSuperclass().getSuperclass() == RunemagicModElements.ModElement.class)
 						elements.add((RunemagicModElements.ModElement) clazz.getConstructor(this.getClass()).newInstance(this));
 				}
 			}

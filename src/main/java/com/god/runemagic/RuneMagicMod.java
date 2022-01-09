@@ -7,6 +7,7 @@ import com.god.runemagic.common.ManaMapSupplier;
 import com.god.runemagic.common.RuneMetaMap;
 import com.god.runemagic.common.RuneMetaMapSupplier;
 import com.god.runemagic.gui.ManaBarGui;
+import com.god.runemagic.util.ServerResourceReader;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -93,6 +94,7 @@ public class RuneMagicMod {
 
 		@SubscribeEvent
 		public void serverLoad(FMLServerStartingEvent event) {
+			new ServerResourceReader(event);
 			event.getServer().overworld().getChunkSource().getDataStorage().computeIfAbsent(new ManaMapSupplier(), ManaMap.NBT_KEY);
 			event.getServer().overworld().getChunkSource().getDataStorage().computeIfAbsent(new RuneMetaMapSupplier(), RuneMetaMap.NBT_KEY);
 			this.parent.elements.getElements().forEach(element -> element.serverLoad(event));

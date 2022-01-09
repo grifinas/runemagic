@@ -12,7 +12,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +37,7 @@ public class TransmutationMap extends RunemagicModElements.ModElement {
         this.upgrades = new HashMap<>();
         this.downgrades = new HashMap<>();
 
-        this.parseTransmutationJson(ServerResourceReader.fromEvent("transmutation.json", event));
+        this.parseTransmutationJson(ServerResourceReader.getInstance().readJson("transmutation.json"));
     }
 
     public Transmutation findUpgrade(ItemEntity item) {
@@ -59,6 +58,7 @@ public class TransmutationMap extends RunemagicModElements.ModElement {
         return this.customWoolBehaviour(key);
     }
 
+    // TODO it might be possible do this with tags if all wool elements have a wool tag
     private @Nullable Transmutation customWoolBehaviour(String key) {
         Pattern woolColorRegex = Pattern.compile("minecraft:([a-z_]+)_wool");
         Matcher m = woolColorRegex.matcher(key);

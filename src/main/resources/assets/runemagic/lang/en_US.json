@@ -4,6 +4,7 @@
 	"block.runemagic.limestone": "Limestone Block",
 	"block.runemagic.upgrade_rune": "Chalk",
 	"block.runemagic.destruction_rune": "Red chalk",
-	"block.runemagic.teleportation_rune": "Green chalk",
+	"block.runemagic.conjuration_rune": "Green chalk",
+	"block.runemagic.alteration_rune": "Blue chalk",
 	"item.runemagic.spell_scroll": "Spell scroll"
 }

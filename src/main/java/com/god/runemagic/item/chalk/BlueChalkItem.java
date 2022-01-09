@@ -5,11 +5,11 @@ import net.minecraft.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
-public class GreenChalkItem extends RunemagicModElements.ModElement {
-    @ObjectHolder("runemagic:conjuration_rune")
+public class BlueChalkItem extends RunemagicModElements.ModElement {
+    @ObjectHolder("runemagic:alteration_rune")
     public static final Item block = null;
 
-    public GreenChalkItem(RunemagicModElements instance) {
+    public BlueChalkItem(RunemagicModElements instance) {
         super(instance, 20);
     }
 }

@@ -29,6 +29,7 @@ public class Mana {
 
     public void setValue(int value) {
         this.value = Math.max(Math.min(this.maxValue, value), 0);
+        //TODO does not work after save and quiting to menu and loading in again
         ServerPlayerEntity serverPlayer = this.player.level.getServer().getPlayerList().getPlayer(this.player.getUUID());
         RuneMagicMod.PACKET_HANDLER.send(PacketDistributor.PLAYER.with(() -> serverPlayer), this.toManaUpdateMessage());
     }

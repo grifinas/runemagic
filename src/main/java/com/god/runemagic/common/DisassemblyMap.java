@@ -31,7 +31,7 @@ public class DisassemblyMap extends RunemagicModElements.ModElement {
     @Override
     public void serverLoad(FMLServerStartingEvent event) {
         this.disassemblies = new HashMap<>();
-        this.parseTransmutationJson(ServerResourceReader.fromEvent("disassembly.json", event));
+        this.parseTransmutationJson(ServerResourceReader.getInstance().readJson("disassembly.json"));
     }
 
     public double findValue(ItemEntity item) {

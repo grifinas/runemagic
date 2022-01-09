@@ -1,0 +1,35 @@
+{
+  "primary": "runemagic:conjuration_rune",
+  "sacrifices": {
+    "minecraft:paper": {
+      "count": 3
+    },
+    "minecraft:feather": {
+      "min": 0,
+      "max": 16
+    },
+    "minecraft:compass": {
+      "count": 1
+    }
+  },
+  "runes": {
+    "runemagic:destruction_rune": {
+      "min": 0,
+      "max": 8,
+      "cost": 10
+    },
+    "runemagic:conjuration_rune": {
+      "min": 0,
+      "max": 9,
+      "cost": 10
+    },
+    "runemagic:alteration_rune": {
+      "min": 0,
+      "max": 9,
+      "cost": 10
+    }
+  },
+  "result": {
+    "spell": "teleportation_spell"
+  }
+}

@@ -1,16 +1,16 @@
 package com.god.runemagic.block.runes;
 
 import com.god.runemagic.RuneMagicMod;
+import com.god.runemagic.common.RuneCraftingBehaviour;
 import com.god.runemagic.common.entities.RuneActivationContext;
+import com.god.runemagic.common.entities.RuneCraftingRecipe;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -24,16 +24,14 @@ import java.util.*;
 
 public abstract class AbstractRune extends Block {
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
-    static final BooleanProperty activated = BooleanProperty.create("activated");
+    public static final BooleanProperty activated = BooleanProperty.create("activated");
     protected boolean isChaining = true;
+    protected boolean isForSpellCrafting = false;
 
     public AbstractRune() {
         super(AbstractBlock.Properties.of(Material.STONE, MaterialColor.CLAY).strength(0.1f).sound(SoundType.SAND)
-                .noCollission().lightLevel((state) -> {
-                    boolean isActivated = state.getValue(activated);
-                    return isActivated ? 12 : 1;
-                }));
-        this.registerDefaultState(this.stateDefinition.any().setValue(activated, false));
+                .noCollission().lightLevel((state) -> state.getValue(activated) ? 12 : 1));
+        this.registerDefaultState(this.defaultBlockState().setValue(activated, false));
     }
 
     @Override
@@ -42,17 +40,25 @@ public abstract class AbstractRune extends Block {
     }
 
     protected boolean runeBehaviour(RuneActivationContext context) {
+        return !isForSpellCrafting || this.spellCraftingBehaviour(context);
+    }
+
+    protected boolean spellCraftingBehaviour(RuneActivationContext context) {
+        RuneCraftingRecipe recipe = RuneCraftingBehaviour.get().match(context);
+
+        RuneMagicMod.LOGGER.info("found recipe: {}", recipe);
+
+        if (recipe == null) {
+            return false;
+        }
+
+        recipe.craft(context);
+
         return true;
     }
 
     protected void afterSuccessfulActivation(RuneActivationContext context) {
-        World world = context.getWorld();
-        // Remove original block
-        world.removeBlock(context.getPosition(), false);
-        // Remove all activated blocks
-        for (BlockPos activated : context.getActivatedRunePositions()) {
-            world.removeBlock(activated, false);
-        }
+        this.removeActivatedRunes(context);
     }
 
     /**
@@ -85,6 +91,16 @@ public abstract class AbstractRune extends Block {
         world.setBlock(position, newState, 0);
     }
 
+    protected void removeActivatedRunes(RuneActivationContext context) {
+        World world = context.getWorld();
+        // Remove original block
+        world.removeBlock(context.getPosition(), false);
+        // Remove all activated blocks
+        for (BlockPos activated : context.getActivatedRunePositions()) {
+            world.removeBlock(activated, false);
+        }
+    }
+
     protected abstract @Nullable BlockState getChangeState();
 
     protected void activateNeighbours(RuneActivationContext context) {
@@ -103,7 +119,7 @@ public abstract class AbstractRune extends Block {
                 continue;
             }
 
-            if (world.getBlockState(position).getBlock().is(this)) {
+            if (world.getBlockState(position).getBlock() instanceof AbstractRune) {
                 // TODO maybe use tags or something to not always get as chainActivate is nothing by default
                 AbstractRune rune = ((AbstractRune) world.getBlockState(position).getBlock());
                 rune.chainActivate(context, position);
@@ -114,31 +130,6 @@ public abstract class AbstractRune extends Block {
         }
 
         context.setActivatedRunePositions(activated);
-    }
-
-    protected List<ItemEntity> getSacrificedItems(RuneActivationContext context) {
-        BlockPos blockPosition = context.getPosition();
-
-        int minX = blockPosition.getX();
-        int maxX = blockPosition.getX();
-        int minZ = blockPosition.getZ();
-        int maxZ = blockPosition.getZ();
-
-        // TODO this is not correct, bounding box might take some irrelevant items
-        for (BlockPos position : context.getActivatedRunePositions()) {
-            minX = Math.min(minX, position.getX());
-            maxX = Math.max(maxX, position.getX());
-
-            minZ = Math.min(minZ, position.getZ());
-            maxZ = Math.max(maxZ, position.getZ());
-        }
-
-        AxisAlignedBB bb = new AxisAlignedBB(minX, blockPosition.getY(), minZ, maxX + 0.99, blockPosition.getY() + 1, maxZ + 0.99);
-
-        List<ItemEntity> items = context.getWorld().getEntitiesOfClass(ItemEntity.class,
-                bb);
-        RuneMagicMod.LOGGER.info("found items: {}, bb {}", items, bb);
-        return items;
     }
 
     protected Collection<BlockPos> getNeighbours(BlockPos blockPosition) {

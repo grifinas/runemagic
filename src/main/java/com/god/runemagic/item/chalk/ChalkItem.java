@@ -1,4 +1,4 @@
-package com.god.runemagic.item;
+package com.god.runemagic.item.chalk;
 
 import com.god.runemagic.RunemagicModElements;
 

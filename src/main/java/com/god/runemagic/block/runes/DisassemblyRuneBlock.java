@@ -5,7 +5,6 @@ import com.god.runemagic.common.DisassemblyMap;
 import com.god.runemagic.common.ManaMap.Mana;
 import com.god.runemagic.common.ManaMapSupplier;
 import com.god.runemagic.common.entities.RuneActivationContext;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,7 +13,7 @@ import net.minecraftforge.registries.ObjectHolder;
 @RunemagicModElements.ModElement.Tag
 public class DisassemblyRuneBlock extends RunemagicModElements.ModElement {
     @ObjectHolder("runemagic:disassembly_rune")
-    public static final Block block = null;
+    public static final AbstractRune block = null;
 
     public DisassemblyRuneBlock(RunemagicModElements instance) {
         super(instance, 1);
@@ -22,7 +21,7 @@ public class DisassemblyRuneBlock extends RunemagicModElements.ModElement {
 
     @Override
     public void initElements() {
-        elements.blocks.add(() -> new CustomBlock());
+        elements.blocks.add(CustomBlock::new);
     }
 
     public static class CustomBlock extends AbstractRune {
@@ -43,7 +42,7 @@ public class DisassemblyRuneBlock extends RunemagicModElements.ModElement {
             Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
             int totalGain = 0;
 
-            for (ItemEntity item: this.getSacrificedItems(context)) {
+            for (ItemEntity item: context.getSacrificedItems()) {
                 totalGain += (int) disassembly.findValue(item);
                 item.remove();
             }

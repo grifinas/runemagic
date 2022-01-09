@@ -1,31 +1,36 @@
 package com.god.runemagic.common.spells;
 
+import com.god.runemagic.RunemagicModElements;
+import com.god.runemagic.common.SpellRegistry;
+import com.god.runemagic.common.entities.RuneCraftingResult;
+import com.god.runemagic.common.entities.SpellCastingContext;
 import com.god.runemagic.util.SpellProvider;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.world.World;
 
-abstract public class AbstractSpell {
-    protected final String name = "Spell";
-    protected final int cost;
+abstract public class AbstractSpell extends RunemagicModElements.ModElement {
     protected final SpellType type;
 
-    public AbstractSpell(int cost, SpellType type) {
-        this.cost = cost;
+    public AbstractSpell(RunemagicModElements instance, SpellType type) {
+        super(instance, 8);
         this.type = type;
+        SpellRegistry.registerSpell(this.getRegistryName(), this);
+
     }
 
-    public CompoundNBT toNBT() {
+    /**
+     * Runs when the spell is created
+     * */
+    public CompoundNBT initialize(RuneCraftingResult craftingResult) {
         CompoundNBT c = new CompoundNBT();
-        c.putInt("cost", this.cost);
-        c.putString("name", this.name);
+        c.putString("name", this.getRegistryName());
         //TODO does not seem correct
         c.putString(SpellProvider.SPELL_TYPE_KEY, this.type.name());
         return c;
     }
 
-    abstract public ActionResultType spellBehaviour(World world, PlayerEntity playerEntity, ItemStack stack);
-    abstract public AbstractSpell fromNBT(CompoundNBT nbt);
+    abstract public ActionResultType spellBehaviour(SpellCastingContext context);
+    abstract public String getRegistryName();
+    abstract public AbstractSpellInstance getInstance(CompoundNBT nbt);
+
 }

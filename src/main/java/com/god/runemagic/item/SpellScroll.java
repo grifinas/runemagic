@@ -1,17 +1,19 @@
 package com.god.runemagic.item;
 
 import com.god.runemagic.RunemagicModElements;
+import com.god.runemagic.common.entities.RuneCraftingResult;
 import com.god.runemagic.common.spells.AbstractSpell;
-import com.god.runemagic.common.spells.FireBallSpell;
+import com.god.runemagic.common.spells.AbstractSpellInstance;
 import com.god.runemagic.util.SpellProvider;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -24,18 +26,18 @@ public class SpellScroll extends RunemagicModElements.ModElement {
         super(instance, 4);
     }
 
-    @Override
-    public void initElements() {
-        elements.items.add(ItemCustom::new);
-    }
-
-    public static ItemStack makeSpellScroll(AbstractSpell spell) {
+    public static ItemStack makeSpellScroll(AbstractSpell spell, RuneCraftingResult result) {
         ItemStack resultingItemStack = new ItemStack(block, 1);
 
         CompoundNBT nbt = new CompoundNBT();
-        nbt.put(SpellProvider.SPELL_KEY, spell.toNBT());
+        nbt.put(SpellProvider.SPELL_KEY, spell.initialize(result));
         resultingItemStack.setTag(nbt);
         return resultingItemStack;
+    }
+
+    @Override
+    public void initElements() {
+        elements.items.add(ItemCustom::new);
     }
 
     public static class ItemCustom extends Item {
@@ -52,12 +54,12 @@ public class SpellScroll extends RunemagicModElements.ModElement {
         public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
             ItemStack itemstack = playerEntity.getItemInHand(hand);
 
-            AbstractSpell spell = SpellProvider.get(itemstack);
+            AbstractSpellInstance spell = SpellProvider.get(itemstack);
             if (spell == null) {
                 return ActionResult.pass(itemstack);
             }
 
-            ActionResultType result = spell.spellBehaviour(world, playerEntity, itemstack);
+            ActionResultType result = world.isClientSide ? ActionResultType.SUCCESS : spell.cast(world, playerEntity, itemstack);
 
             switch (result) {
                 case FAIL:

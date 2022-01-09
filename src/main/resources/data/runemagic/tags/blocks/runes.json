@@ -4,7 +4,9 @@
 		"runemagic:upgrade_rune",
 		"runemagic:downgrade_rune",
 		"runemagic:disassembly_rune",
+
 		"runemagic:destruction_rune",
-		"runemagic:teleportation_rune"
+		"runemagic:conjuration_rune",
+		"runemagic:alteration_rune"
 	]
 }

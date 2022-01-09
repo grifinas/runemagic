@@ -1,21 +1,16 @@
 package com.god.runemagic.block.runes;
 
-
-import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
-import com.god.runemagic.common.RuneCraftingBehaviour;
-import com.god.runemagic.common.entities.RuneActivationContext;
-import com.god.runemagic.common.entities.RuneCraftingRecipe;
 import com.god.runemagic.item.chalk.AbstractChalk;
 import net.minecraft.block.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
-public class DestructionRuneBlock extends RunemagicModElements.ModElement {
-    @ObjectHolder("runemagic:destruction_rune")
+public class AlterationRuneBlock extends RunemagicModElements.ModElement {
+    @ObjectHolder("runemagic:alteration_rune")
     public static final AbstractRune block = null;
 
-    public DestructionRuneBlock(RunemagicModElements instance) {
+    public AlterationRuneBlock(RunemagicModElements instance) {
         super(instance, 1);
     }
 
@@ -28,8 +23,7 @@ public class DestructionRuneBlock extends RunemagicModElements.ModElement {
     public static class CustomBlock extends AbstractRune {
         public CustomBlock() {
             super();
-            setRegistryName("destruction_rune");
-            this.isForSpellCrafting = true;
+            setRegistryName("alteration_rune");
         }
 
         @Override
