@@ -79,7 +79,7 @@ public class RuneCraftingRecipe {
         Mana mana = context.getMana();
 
         // TODO this is a little iffy, makes it so when not enough mana just don't find crafting recipe
-        return totalCost <= mana.getValue();
+        return mana.hasEnough(totalCost);
     }
 
     private boolean matchesSacrificeRequirements(RuneActivationContext context) {

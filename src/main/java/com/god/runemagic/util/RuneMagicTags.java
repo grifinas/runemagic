@@ -12,13 +12,15 @@ import net.minecraftforge.common.Tags;
 public class RuneMagicTags {
 	public static class Blocks {
 		public static final Tags.IOptionalNamedTag<Block> RUNES = createTag("runes");
-		
+
 		private static Tags.IOptionalNamedTag<Block> createTag(String name) {
 			return BlockTags.createOptional(new ResourceLocation(RuneMagicMod.MOD_ID, name));
 		}
 	}
 	
 	public static class Items {
+		public static final Tags.IOptionalNamedTag<Item> MANA_ALTERING = createTag("mana_altering");
+
 		private static Tags.IOptionalNamedTag<Item> createTag(String name) {
 			return ItemTags.createOptional(new ResourceLocation(RuneMagicMod.MOD_ID, name));
 		}

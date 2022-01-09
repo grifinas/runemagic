@@ -192,7 +192,7 @@ Philosopher shard = P
 * Allows to use hunger instead of mana at the rate of 1 hunger = 10 mana
 * Allows to use health instead of mana at the rate of 1 heart = 10 mana
 * Always uses mana -> hunger -> health
-* Successful **circle activation** lowers durability
+* Successful **circle activation** lowers durability ????
 
 ## Mana stone
 * Does not generate in the world

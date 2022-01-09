@@ -61,6 +61,11 @@
       "result" : "minecraft:gold_ingot",
       "rate" : "1:4",
       "cost" : 5
+    },
+    "upgrade": {
+      "result" : "runemagic:philosophers_shard",
+      "rate" : "4:1",
+      "cost" : 10
     }
   },
   "minecraft:redstone" : {

@@ -56,7 +56,7 @@ public class FireBallSpell extends AbstractSpell {
         PlayerEntity playerEntity = context.getPlayerEntity();
 
 
-        if (mana.getValue() < instance.getCost()) {
+        if (!mana.hasEnough(instance.getCost())) {
             return ActionResultType.FAIL;
         }
 

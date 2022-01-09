@@ -6,5 +6,7 @@
 	"block.runemagic.destruction_rune": "Red chalk",
 	"block.runemagic.conjuration_rune": "Green chalk",
 	"block.runemagic.alteration_rune": "Blue chalk",
-	"item.runemagic.spell_scroll": "Spell scroll"
+	"item.runemagic.spell_scroll": "Spell scroll",
+	"item.runemagic.philosophers_stone": "Philosophers' stone",
+	"item.runemagic.philosophers_shard": "Philosophers' shard"
 }
