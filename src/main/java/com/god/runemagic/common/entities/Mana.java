@@ -5,15 +5,14 @@ import com.god.runemagic.common.messages.ManaUpdate;
 import com.god.runemagic.item.PhilosophersStone;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import java.util.HashSet;
-
 public class Mana {
-    private static final int FOOD_PER_10_MANA = 2;
-    private static final int MAX_FOOD_FOR_MANA = 20;
+    private static final int FOOD_PER_10_MANA = 4;
+    private static final int HEALTH_PER_10_MANA = 2;
+    private static final int MAX_DRAIN_FOR_MANA = 20;
 
     protected final int maxValue;
     protected int value;
@@ -33,7 +32,8 @@ public class Mana {
     }
 
     public boolean hasEnough(int cost) {
-        return this.withPhilosopherStone || this.value >= cost;
+        return true;
+//        return this.withPhilosopherStone || this.value >= cost;
     }
 
     public int getValue() {
@@ -45,21 +45,21 @@ public class Mana {
         RuneMagicMod.LOGGER.info("set value {}, real {}", value, realValue);
         this.value = realValue;
 
-        // If we overdrew w/ stone, need to use food and health
-        if (this.hasPhilosopherStoneInventory() && realValue != value) {
+        // If we overdrew, need to use food and health
+        if (realValue != value && !this.drainPhilosopherStone(value)) {
             this.drainPlayer(value);
         }
 
         this.sendManaUpdate();
     }
 
-    public void withPhilosopherStone(boolean withPhilosopherShard) {
-        this.withPhilosopherStone = withPhilosopherShard;
-    }
-
-    public boolean hasPhilosopherStone() {
-        return this.withPhilosopherStone;
-    }
+//    public void withPhilosopherStone(boolean withPhilosopherShard) {
+//        this.withPhilosopherStone = withPhilosopherShard;
+//    }
+//
+//    public boolean hasPhilosopherStone() {
+//        return this.withPhilosopherStone;
+//    }
 
     public void decrement(int value) {
         this.setValue(this.value - value);
@@ -92,23 +92,27 @@ public class Mana {
         int overdraft = this.value - desiredValue;
 
         int fromFood = FOOD_PER_10_MANA * overdraft / 10;
-        int realFromFood = Math.min(fromFood, MAX_FOOD_FOR_MANA);
+        int fromHealth = HEALTH_PER_10_MANA * overdraft / 10;
+        int realFromFood = Math.min(fromFood, MAX_DRAIN_FOR_MANA);
+        int realFromHealth = Math.min(fromHealth, MAX_DRAIN_FOR_MANA);
 
         RuneMagicMod.LOGGER.info("overdraft: {}, wanted to take from food {}, but could only take {}", overdraft, fromFood, realFromFood);
         RuneMagicMod.LOGGER.info("current food level: {}", this.player.getFoodData().getFoodLevel());;
 
         this.player.getFoodData().setFoodLevel(this.player.getFoodData().getFoodLevel() - realFromFood);
-        this.player.hurt(DamageSource.GENERIC, fromFood - realFromFood);
+        this.player.hurt(DamageSource.GENERIC, realFromHealth);
     }
 
-    protected boolean hasPhilosopherStoneInventory() {
-        HashSet<Item> set = new HashSet<>();
-        set.add(PhilosophersStone.block);
-        boolean realState = this.player.inventory.hasAnyOf(set);
-        if (realState != this.withPhilosopherStone) {
-            this.withPhilosopherStone(realState);
+    protected boolean drainPhilosopherStone(int desiredValue) {
+        int overdraft = this.value - desiredValue;
+
+        for (ItemStack itemStack: this.player.inventory.items) {
+            if (itemStack.getItem() instanceof PhilosophersStone.ItemCustom) {
+                itemStack.setDamageValue(itemStack.getDamageValue() + overdraft);
+                return true;
+            }
         }
 
-        return realState;
+        return false;
     }
 }

@@ -8,7 +8,6 @@
   * en_UK should not show translation strings
 * Rename disassembly to something else
   * Evokes ideas of dismantling items to base resources, maybe recuperation? sacrifice? 
-* Fix Rune rendering to be more leaf like
 * add particle effects on rune used
 * add sounds on rune used
 * Add other kinds of chalk

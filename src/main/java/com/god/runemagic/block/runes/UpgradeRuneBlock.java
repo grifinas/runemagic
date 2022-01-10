@@ -7,8 +7,11 @@ import com.god.runemagic.common.TransmutationMap;
 
 import com.god.runemagic.item.chalk.AbstractChalk;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
@@ -24,6 +27,12 @@ public class UpgradeRuneBlock extends RunemagicModElements.ModElement {
 	public void initElements() {
 		elements.blocks.add(CustomBlock::new);
 		elements.items.add(() -> new AbstractChalk(block));
+	}
+
+	@Override
+	public void clientLoad(FMLClientSetupEvent event) {
+		RenderTypeLookup.setRenderLayer(block, RenderType.cutoutMipped());
+		super.clientLoad(event);
 	}
 
 	public static class CustomBlock extends AbstractRune {

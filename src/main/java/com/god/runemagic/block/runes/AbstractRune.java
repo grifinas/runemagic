@@ -29,7 +29,7 @@ public abstract class AbstractRune extends Block {
     protected boolean isForSpellCrafting = false;
 
     public AbstractRune() {
-        super(AbstractBlock.Properties.of(Material.STONE, MaterialColor.CLAY).strength(0.1f).sound(SoundType.SAND)
+        super(AbstractBlock.Properties.of(Material.STONE, MaterialColor.CLAY).noOcclusion().strength(0.1f).sound(SoundType.SAND)
                 .noCollission().lightLevel((state) -> state.getValue(activated) ? 12 : 1));
         this.registerDefaultState(this.defaultBlockState().setValue(activated, false));
     }

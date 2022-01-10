@@ -6,8 +6,11 @@ import com.god.runemagic.common.Transmutation;
 import com.god.runemagic.common.TransmutationMap;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
@@ -22,6 +25,12 @@ public class DowngradeRuneBlock extends RunemagicModElements.ModElement {
 	@Override
 	public void initElements() {
 		elements.blocks.add(CustomBlock::new);
+	}
+
+	@Override
+	public void clientLoad(FMLClientSetupEvent event) {
+		RenderTypeLookup.setRenderLayer(block, RenderType.cutoutMipped());
+		super.clientLoad(event);
 	}
 	
 	public static class CustomBlock extends AbstractRune {

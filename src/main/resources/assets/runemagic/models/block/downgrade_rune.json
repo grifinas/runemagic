@@ -1,5 +1,5 @@
 {
-  "parent": "block/pressure_plate_down",
+  "parent": "runemagic:block/rune",
   "textures": {
     "texture": "runemagic:blocks/downgrade_rune"
   }

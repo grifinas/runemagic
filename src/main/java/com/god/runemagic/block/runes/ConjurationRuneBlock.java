@@ -8,9 +8,12 @@ import com.god.runemagic.item.chalk.AbstractChalk;
 import com.god.runemagic.util.PositionDistanceHelper;
 import com.god.runemagic.util.SpellProvider;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @RunemagicModElements.ModElement.Tag
@@ -27,6 +30,12 @@ public class ConjurationRuneBlock extends RunemagicModElements.ModElement {
     public void initElements() {
         elements.blocks.add(CustomBlock::new);
         elements.items.add(() -> new AbstractChalk(block));
+    }
+
+    @Override
+    public void clientLoad(FMLClientSetupEvent event) {
+        RenderTypeLookup.setRenderLayer(block, RenderType.cutoutMipped());
+        super.clientLoad(event);
     }
 
     public static class CustomBlock extends AbstractRune {

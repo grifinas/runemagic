@@ -72,7 +72,7 @@ public class ManaMap extends WorldSavedData {
 
             Mana mana = new Mana(manaNBT.getInt("maxMana"), parent, player);
             mana.setValue(manaNBT.getInt("mana"));
-            mana.withPhilosopherStone(manaNBT.getBoolean("hasPhilosopherShard"));
+//            mana.withPhilosopherStone(manaNBT.getBoolean("hasPhilosopherShard"));
             return mana;
         }
 
@@ -85,7 +85,7 @@ public class ManaMap extends WorldSavedData {
             CompoundNBT manaNBT = new CompoundNBT();
             manaNBT.putInt("mana", this.getValue());
             manaNBT.putInt("maxMana", this.getMaxValue());
-            manaNBT.putBoolean("hasPhilosopherShard", this.hasPhilosopherStone());
+//            manaNBT.putBoolean("hasPhilosopherShard", this.hasPhilosopherStone());
 
             return manaNBT;
         }
