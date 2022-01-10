@@ -10,6 +10,5 @@
   * Evokes ideas of dismantling items to base resources, maybe recuperation? sacrifice? 
 * add particle effects on rune used
 * add sounds on rune used
-* Add other kinds of chalk
-* Add other rune recipes
 * Add patchouli integration
+* Drain mana on rune use over time

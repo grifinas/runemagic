@@ -2,10 +2,14 @@ package com.god.runemagic.item;
 
 import com.god.runemagic.RuneMagicMod;
 import com.god.runemagic.RunemagicModElements;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Rarity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.*;
+import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -37,29 +41,38 @@ public class PhilosophersStone extends RunemagicModElements.ModElement {
             return new ItemStack(this);
         }
 
-//        @Override
-//        public boolean onDroppedByPlayer(ItemStack item, PlayerEntity player) {
-//            ManaMap.Mana mana = ManaMapSupplier.getStatic().getPlayerMana(player);
-//            mana.withPhilosopherStone(false);
-//            return super.onDroppedByPlayer(item, player);
-//        }
-//
-//        @SubscribeEvent
-//        public static void onItemPickupEvent(PlayerEvent.ItemPickupEvent event) {
-//            if (event.getStack().getItem() instanceof ItemCustom) {
-//                RuneMagicMod.LOGGER.info("pickup philosophers stone {}", event.getStack());
-//                ManaMap.Mana mana = ManaMapSupplier.getStatic().getPlayerMana(event.getPlayer());
-//                mana.withPhilosopherStone(true);
-//            }
-//        }
-//
-//        @SubscribeEvent
-//        public static void onItemCraftedEvent(PlayerEvent.ItemCraftedEvent event) {
-//            if (event.getCrafting().getItem() instanceof ItemCustom) {
-//                RuneMagicMod.LOGGER.info("craft philosophers stone {}", event.getCrafting());
-//                ManaMap.Mana mana = ManaMapSupplier.getStatic().getPlayerMana(event.getPlayer());
-//                mana.withPhilosopherStone(true);
-//            }
-//        }
+        @Override
+        public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
+            if (player.level.isClientSide) {
+                Vector3d pos = player.getPosition(1).add(0, 1.5, 0).subtract(player.getLookAngle().scale(15D).multiply(-1, -1, -1));
+                player.level.addParticle(RedstoneParticleData.REDSTONE, pos.x, pos.y, pos.z, 0D, 0D, 0D);
+                player.level.addParticle(RedstoneParticleData.REDSTONE, pos.x + 0.5, pos.y + 0.50, pos.z + 0.5, 0D, 0D, 0D);
+                player.level.addParticle(RedstoneParticleData.REDSTONE, pos.x + 0.5, pos.y - 0.50, pos.z + 0.5, 0D, 0D, 0D);
+                player.level.addParticle(RedstoneParticleData.REDSTONE, pos.x - 0.5, pos.y + 0.50, pos.z - 0.5, 0D, 0D, 0D);
+                player.level.addParticle(RedstoneParticleData.REDSTONE, pos.x - 0.5, pos.y - 0.50, pos.z - 0.5, 0D, 0D, 0D);
+            }
+        }
+
+        @Override
+        public UseAction getUseAnimation(ItemStack p_77661_1_) {
+            return UseAction.NONE;
+        }
+
+        @Override
+        public void releaseUsing(ItemStack p_77615_1_, World p_77615_2_, LivingEntity p_77615_3_, int p_77615_4_) {
+            RuneMagicMod.LOGGER.info("release using stone");
+            super.releaseUsing(p_77615_1_, p_77615_2_, p_77615_3_, p_77615_4_);
+        }
+
+        @Override
+        public int getUseDuration(ItemStack p_77626_1_) {
+            return 72000;
+        }
+
+        @Override
+        public ActionResult<ItemStack> use(World p_77659_1_, PlayerEntity player, Hand hand) {
+            player.startUsingItem(hand);
+            return ActionResult.consume(player.getItemInHand(hand));
+        }
     }
 }
